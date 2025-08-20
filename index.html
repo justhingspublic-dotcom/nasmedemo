@@ -6,6 +6,7 @@
 	<title>專案管理系統</title>
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 	<style>
 		:root { 
 			--bs-body-font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text","SF Pro Display","Noto Sans TC","Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang TC", "Microsoft JhengHei", sans-serif; 
@@ -27,7 +28,68 @@
 			background-color: #ffffff;
 			border-right: 2px solid #6BB0B6;
 			overflow-y: auto;
-			transition: transform 0.3s ease;
+			transition: all 0.3s ease;
+		}
+		
+		.sidebar.collapsed {
+			width: 60px;
+		}
+		
+		.sidebar.collapsed .nav-link span,
+		.sidebar.collapsed h5 {
+			display: none;
+		}
+		
+		.sidebar.collapsed .nav-link {
+			text-align: center;
+			padding: 0.5rem;
+		}
+		
+		.sidebar.collapsed .nav-link i {
+			font-size: 1.2rem;
+		}
+		
+		.sidebar.collapsed .sub-item {
+			padding-left: 0.5rem !important;
+		}
+		
+		.main-content {
+			flex: 1;
+			min-height: 100vh;
+			overflow-x: auto;
+			background-color: #f0f8f8;
+			padding: 20px;
+			transition: margin-left 0.3s ease;
+		}
+		
+		.main-content.sidebar-collapsed {
+			margin-left: 60px;
+		}
+		
+		/* 大螢幕側邊欄收合樣式 */
+		@media (min-width: 768px) {
+			.sidebar.collapsed {
+				width: 60px;
+			}
+			
+			.sidebar.collapsed .nav-link span,
+			.sidebar.collapsed h5,
+			.sidebar.collapsed .sub-item {
+				display: none;
+			}
+			
+			.sidebar.collapsed .nav-link {
+				text-align: center;
+				padding: 0.5rem;
+			}
+			
+			.sidebar.collapsed .nav-link i {
+				font-size: 1.2rem;
+			}
+			
+			.sidebar.collapsed .collapse {
+				display: none !important;
+			}
 		}
 		
 		/* 響應式側邊欄 */
@@ -67,13 +129,7 @@
 				visibility: visible;
 			}
 		}
-		.main-content {
-			flex: 1;
-			min-height: 100vh;
-			overflow-x: auto;
-			background-color: #f0f8f8;
-			padding: 20px;
-		}
+
 		.nav-link {
 			color: #4a7a7e;
 			border-radius: 0.375rem;
@@ -187,11 +243,22 @@
 		<div class="sidebar" id="sidebar">
 			<div class="p-3 border-bottom d-flex justify-content-between align-items-center">
 				<h5 class="mb-0">專案管理系統</h5>
-				<button class="btn btn-sm btn-outline-secondary d-md-none" id="sidebarToggle">
-					<i class="bi bi-x-lg"></i>
-				</button>
+				<div class="d-flex gap-1">
+					<button class="btn btn-sm btn-outline-secondary" id="sidebarCollapseBtn" title="收合側邊欄">
+						<i class="bi bi-chevron-left"></i>
+					</button>
+					<button class="btn btn-sm btn-outline-secondary d-md-none" id="sidebarToggle">
+						<i class="bi bi-x-lg"></i>
+					</button>
+				</div>
 			</div>
 			<nav class="nav flex-column p-3">
+				<!-- 首頁 -->
+				<a class="nav-link d-flex align-items-center" href="javascript:void(0);" onclick="showHome()">
+					<i class="bi bi-house me-2"></i>
+					<span class="flex-grow-1">首頁</span>
+				</a>
+				
 				<!-- 專案列表 -->
 				<a class="nav-link d-flex align-items-center" data-bs-toggle="collapse" href="#projectList" role="button">
 					<i class="bi bi-folder me-2"></i>
@@ -307,12 +374,414 @@
 			<div class="container-fluid p-4">
 				<!-- 首頁 -->
 				<div id="home-page" class="content-page active">
-					<div class="row">
-						<div class="col-12">
-							<h2 class="mb-4">歡迎使用專案管理系統</h2>
-							<div class="card">
+					<div class="d-flex justify-content-between align-items-center mb-4">
+						<h1>專案管理系統儀表板</h1>
+						<div class="text-muted">最後更新：<span id="lastUpdateTime"></span></div>
+					</div>
+					
+					<!-- 統計卡片 -->
+					<div class="row g-4 mb-4">
+						<div class="col-xl-3 col-md-6">
+							<div class="card border-0 shadow-sm">
 								<div class="card-body">
-									<p class="card-text">請從左側選單選擇功能模組。</p>
+									<div class="d-flex align-items-center">
+										<div class="flex-shrink-0">
+											<div class="bg-primary bg-opacity-10 rounded-circle p-3">
+												<i class="bi bi-folder text-primary" style="font-size: 1.5rem;"></i>
+											</div>
+										</div>
+										<div class="flex-grow-1 ms-3">
+											<h6 class="card-title text-muted mb-1">總專案數</h6>
+											<h3 class="mb-0" id="totalProjects">0</h3>
+											<small class="text-primary">本月新增 12 個</small>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+						<div class="col-xl-3 col-md-6">
+							<div class="card border-0 shadow-sm">
+								<div class="card-body">
+									<div class="d-flex align-items-center">
+										<div class="flex-shrink-0">
+											<div class="bg-success bg-opacity-10 rounded-circle p-3">
+												<i class="bi bi-check-circle text-success" style="font-size: 1.5rem;"></i>
+											</div>
+										</div>
+										<div class="flex-grow-1 ms-3">
+											<h6 class="card-title text-muted mb-1">準時交件</h6>
+											<h3 class="mb-0" id="onTimeProjects">0</h3>
+											<small class="text-success" id="onTimeRate">0%</small>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+						<div class="col-xl-3 col-md-6">
+							<div class="card border-0 shadow-sm">
+								<div class="card-body">
+									<div class="d-flex align-items-center">
+										<div class="flex-shrink-0">
+											<div class="bg-warning bg-opacity-10 rounded-circle p-3">
+												<i class="bi bi-exclamation-triangle text-warning" style="font-size: 1.5rem;"></i>
+											</div>
+										</div>
+										<div class="flex-grow-1 ms-3">
+											<h6 class="card-title text-muted mb-1">遲交專案</h6>
+											<h3 class="mb-0" id="lateProjects">0</h3>
+											<small class="text-warning" id="lateRate">0%</small>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+						<div class="col-xl-3 col-md-6">
+							<div class="card border-0 shadow-sm">
+								<div class="card-body">
+									<div class="d-flex align-items-center">
+										<div class="flex-shrink-0">
+											<div class="bg-info bg-opacity-10 rounded-circle p-3">
+												<i class="bi bi-building text-info" style="font-size: 1.5rem;"></i>
+											</div>
+										</div>
+										<div class="flex-grow-1 ms-3">
+											<h6 class="card-title text-muted mb-1">合作廠商</h6>
+											<h3 class="mb-0" id="totalVendors">0</h3>
+											<small class="text-info">活躍廠商 18 家</small>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<!-- 第二排統計卡片 -->
+					<div class="row g-4 mb-4">
+						<div class="col-xl-3 col-md-6">
+							<div class="card border-0 shadow-sm">
+								<div class="card-body">
+									<div class="d-flex align-items-center">
+										<div class="flex-shrink-0">
+											<div class="bg-secondary bg-opacity-10 rounded-circle p-3">
+												<i class="bi bi-currency-dollar text-secondary" style="font-size: 1.5rem;"></i>
+											</div>
+										</div>
+										<div class="flex-grow-1 ms-3">
+											<h6 class="card-title text-muted mb-1">總投資金額</h6>
+											<h3 class="mb-0" id="totalInvestment">0</h3>
+											<small class="text-secondary">NT$ 2.8 億</small>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+						<div class="col-xl-3 col-md-6">
+							<div class="card border-0 shadow-sm">
+								<div class="card-body">
+									<div class="d-flex align-items-center">
+										<div class="flex-shrink-0">
+											<div class="bg-success bg-opacity-10 rounded-circle p-3">
+												<i class="bi bi-graph-up text-success" style="font-size: 1.5rem;"></i>
+											</div>
+										</div>
+										<div class="flex-grow-1 ms-3">
+											<h6 class="card-title text-muted mb-1">平均報酬率</h6>
+											<h3 class="mb-0" id="avgReturnRate">0</h3>
+											<small class="text-success">+15.8%</small>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+						<div class="col-xl-3 col-md-6">
+							<div class="card border-0 shadow-sm">
+								<div class="card-body">
+									<div class="d-flex align-items-center">
+										<div class="flex-shrink-0">
+											<div class="bg-warning bg-opacity-10 rounded-circle p-3">
+												<i class="bi bi-calendar-check text-warning" style="font-size: 1.5rem;"></i>
+											</div>
+										</div>
+										<div class="flex-grow-1 ms-3">
+											<h6 class="card-title text-muted mb-1">本月到期</h6>
+											<h3 class="mb-0" id="monthlyDue">0</h3>
+											<small class="text-warning">3 個專案</small>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+						<div class="col-xl-3 col-md-6">
+							<div class="card border-0 shadow-sm">
+								<div class="card-body">
+									<div class="d-flex align-items-center">
+										<div class="flex-shrink-0">
+											<div class="bg-danger bg-opacity-10 rounded-circle p-3">
+												<i class="bi bi-exclamation-circle text-danger" style="font-size: 1.5rem;"></i>
+											</div>
+										</div>
+										<div class="flex-grow-1 ms-3">
+											<h6 class="card-title text-muted mb-1">風險專案</h6>
+											<h3 class="mb-0" id="riskProjects">0</h3>
+											<small class="text-danger">需關注 5 個</small>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<!-- 圖表區域 -->
+					<div class="row g-4 mb-4">
+						<div class="col-xl-8">
+							<div class="card border-0 shadow-sm">
+								<div class="card-header bg-transparent">
+									<h5 class="card-title mb-0">專案狀態分布</h5>
+								</div>
+								<div class="card-body">
+									<canvas id="projectStatusChart" width="400" height="200"></canvas>
+								</div>
+							</div>
+						</div>
+						
+						<div class="col-xl-4">
+							<div class="card border-0 shadow-sm">
+								<div class="card-header bg-transparent">
+									<h5 class="card-title mb-0">遲交統計</h5>
+								</div>
+								<div class="card-body">
+									<canvas id="lateDeliveryChart" width="400" height="200"></canvas>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<!-- 第二排圖表 -->
+					<div class="row g-4 mb-4">
+						<div class="col-xl-6">
+							<div class="card border-0 shadow-sm">
+								<div class="card-header bg-transparent">
+									<h5 class="card-title mb-0">專案類型分布</h5>
+								</div>
+								<div class="card-body">
+									<canvas id="projectTypeChart" width="400" height="200"></canvas>
+								</div>
+							</div>
+						</div>
+						
+						<div class="col-xl-6">
+							<div class="card border-0 shadow-sm">
+								<div class="card-header bg-transparent">
+									<h5 class="card-title mb-0">投資金額趨勢</h5>
+								</div>
+								<div class="card-body">
+									<canvas id="investmentTrendChart" width="400" height="200"></canvas>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<!-- 額外統計資訊 -->
+					<div class="row g-4 mb-4">
+						<div class="col-xl-6">
+							<div class="card border-0 shadow-sm">
+								<div class="card-header bg-transparent">
+									<h5 class="card-title mb-0">本月專案進度</h5>
+								</div>
+								<div class="card-body">
+									<div class="row text-center">
+										<div class="col-4">
+											<div class="border-end">
+												<h4 class="text-primary mb-1" id="monthlyNew">12</h4>
+												<small class="text-muted">新增專案</small>
+											</div>
+										</div>
+										<div class="col-4">
+											<div class="border-end">
+												<h4 class="text-success mb-1" id="monthlyCompleted">8</h4>
+												<small class="text-muted">完成專案</small>
+											</div>
+										</div>
+										<div class="col-4">
+											<h4 class="text-warning mb-1" id="monthlyProgress">75%</h4>
+											<small class="text-muted">進度達成</small>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+						<div class="col-xl-6">
+							<div class="card border-0 shadow-sm">
+								<div class="card-header bg-transparent">
+									<h5 class="card-title mb-0">廠商表現評級</h5>
+								</div>
+								<div class="card-body">
+									<div class="row text-center">
+										<div class="col-3">
+											<div class="border-end">
+												<h4 class="text-success mb-1" id="excellentVendors">8</h4>
+												<small class="text-muted">優秀</small>
+											</div>
+										</div>
+										<div class="col-3">
+											<div class="border-end">
+												<h4 class="text-info mb-1" id="goodVendors">7</h4>
+												<small class="text-muted">良好</small>
+											</div>
+										</div>
+										<div class="col-3">
+											<div class="border-end">
+												<h4 class="text-warning mb-1" id="fairVendors">5</h4>
+												<small class="text-muted">一般</small>
+											</div>
+										</div>
+										<div class="col-3">
+											<h4 class="text-danger mb-1" id="poorVendors">3</h4>
+											<small class="text-muted">需改善</small>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<!-- 第三排統計資訊 -->
+					<div class="row g-4 mb-4">
+						<div class="col-xl-4">
+							<div class="card border-0 shadow-sm">
+								<div class="card-header bg-transparent">
+									<h5 class="card-title mb-0">專案地區分布</h5>
+								</div>
+								<div class="card-body">
+									<div class="row text-center">
+										<div class="col-6">
+											<div class="border-end">
+												<h4 class="text-primary mb-1" id="northProjects">18</h4>
+												<small class="text-muted">北部</small>
+											</div>
+										</div>
+										<div class="col-6">
+											<h4 class="text-success mb-1" id="southProjects">12</h4>
+											<small class="text-muted">南部</small>
+										</div>
+									</div>
+									<div class="row text-center mt-3">
+										<div class="col-6">
+											<div class="border-end">
+												<h4 class="text-info mb-1" id="centralProjects">10</h4>
+												<small class="text-muted">中部</small>
+											</div>
+										</div>
+										<div class="col-6">
+											<h4 class="text-warning mb-1" id="eastProjects">7</h4>
+											<small class="text-muted">東部</small>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+						<div class="col-xl-4">
+							<div class="card border-0 shadow-sm">
+								<div class="card-header bg-transparent">
+									<h5 class="card-title mb-0">投資階段分布</h5>
+								</div>
+								<div class="card-body">
+									<div class="row text-center">
+										<div class="col-6">
+											<div class="border-end">
+												<h4 class="text-primary mb-1" id="seedStage">8</h4>
+												<small class="text-muted">種子期</small>
+											</div>
+										</div>
+										<div class="col-6">
+											<h4 class="text-success mb-1" id="growthStage">15</h4>
+											<small class="text-muted">成長期</small>
+										</div>
+									</div>
+									<div class="row text-center mt-3">
+										<div class="col-6">
+											<div class="border-end">
+												<h4 class="text-info mb-1" id="matureStage">12</h4>
+												<small class="text-muted">成熟期</small>
+											</div>
+										</div>
+										<div class="col-6">
+											<h4 class="text-warning mb-1" id="exitStage">12</h4>
+											<small class="text-muted">退出期</small>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+						<div class="col-xl-4">
+							<div class="card border-0 shadow-sm">
+								<div class="card-header bg-transparent">
+									<h5 class="card-title mb-0">本月績效指標</h5>
+								</div>
+								<div class="card-body">
+									<div class="row text-center">
+										<div class="col-6">
+											<div class="border-end">
+												<h4 class="text-success mb-1" id="monthlyROI">18.5%</h4>
+												<small class="text-muted">投資報酬率</small>
+											</div>
+										</div>
+										<div class="col-6">
+											<h4 class="text-info mb-1" id="monthlyEfficiency">92%</h4>
+											<small class="text-muted">執行效率</small>
+										</div>
+									</div>
+									<div class="row text-center mt-3">
+										<div class="col-6">
+											<div class="border-end">
+												<h4 class="text-warning mb-1" id="monthlyRisk">7.2%</h4>
+												<small class="text-muted">風險指數</small>
+											</div>
+										</div>
+										<div class="col-6">
+											<h4 class="text-primary mb-1" id="monthlySatisfaction">4.6</h4>
+											<small class="text-muted">滿意度評分</small>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<!-- 廠商遲交排行 -->
+					<div class="row g-4">
+						<div class="col-12">
+							<div class="card border-0 shadow-sm">
+								<div class="card-header bg-transparent">
+									<h5 class="card-title mb-0">廠商遲交排行</h5>
+								</div>
+								<div class="card-body">
+									<div class="table-responsive">
+										<table class="table table-hover">
+											<thead class="table-light">
+												<tr>
+													<th>排名</th>
+													<th>廠商名稱</th>
+													<th>遲交次數</th>
+													<th>遲交率</th>
+													<th>最近遲交日期</th>
+													<th>狀態</th>
+												</tr>
+											</thead>
+											<tbody id="vendorLateTable">
+												<!-- 動態生成 -->
+											</tbody>
+										</table>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -4323,23 +4792,53 @@
 			const sidebarToggle = document.getElementById('sidebarToggle');
 			const sidebarOpenBtn = document.getElementById('sidebarOpenBtn');
 			const sidebarOverlay = document.getElementById('sidebarOverlay');
+			const sidebarCollapseBtn = document.getElementById('sidebarCollapseBtn');
+			const mainContent = document.querySelector('.main-content');
 			
-			// 關閉側邊欄
+			// 檢查本地儲存的側邊欄狀態
+			const sidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+			if (sidebarCollapsed) {
+				sidebar.classList.add('collapsed');
+				mainContent.classList.add('sidebar-collapsed');
+				sidebarCollapseBtn.innerHTML = '<i class="bi bi-chevron-right"></i>';
+			}
+			
+			// 關閉側邊欄（小螢幕）
 			function closeSidebar() {
 				sidebar.classList.remove('show');
 				sidebarOverlay.classList.remove('show');
 			}
 			
-			// 開啟側邊欄
+			// 開啟側邊欄（小螢幕）
 			function openSidebar() {
 				sidebar.classList.add('show');
 				sidebarOverlay.classList.add('show');
 			}
 			
-			// 關閉側邊欄按鈕
+			// 收合側邊欄（大螢幕）
+			function toggleSidebarCollapse() {
+				sidebar.classList.toggle('collapsed');
+				mainContent.classList.toggle('sidebar-collapsed');
+				
+				const isCollapsed = sidebar.classList.contains('collapsed');
+				localStorage.setItem('sidebarCollapsed', isCollapsed);
+				
+				if (isCollapsed) {
+					sidebarCollapseBtn.innerHTML = '<i class="bi bi-chevron-right"></i>';
+					sidebarCollapseBtn.title = '展開側邊欄';
+				} else {
+					sidebarCollapseBtn.innerHTML = '<i class="bi bi-chevron-left"></i>';
+					sidebarCollapseBtn.title = '收合側邊欄';
+				}
+			}
+			
+			// 收合側邊欄按鈕
+			sidebarCollapseBtn.addEventListener('click', toggleSidebarCollapse);
+			
+			// 關閉側邊欄按鈕（小螢幕）
 			sidebarToggle.addEventListener('click', closeSidebar);
 			
-			// 開啟側邊欄按鈕
+			// 開啟側邊欄按鈕（小螢幕）
 			sidebarOpenBtn.addEventListener('click', openSidebar);
 			
 			// 點擊遮罩層關閉側邊欄
@@ -4386,6 +4885,10 @@
 		}
 
 		// 各個頁面的顯示函數
+		function showHome() {
+			showPage('home');
+		}
+		
 		function showProjectType() {
 			showPage('project-type');
 		}
@@ -5232,11 +5735,236 @@ function deleteDunningSetting(button) {
     }
 }
 
-// 輔助函數：取得星期幾
-function getDayOfWeek(date) {
-    const days = ['日', '一', '二', '三', '四', '五', '六'];
-    return '週' + days[date.getDay()];
-}
+		// 輔助函數：取得星期幾
+		function getDayOfWeek(date) {
+			const days = ['日', '一', '二', '三', '四', '五', '六'];
+			return '週' + days[date.getDay()];
+		}
+		
+		// 首頁儀表板功能
+		function initializeDashboard() {
+			// 更新最後更新時間
+			document.getElementById('lastUpdateTime').textContent = new Date().toLocaleString('zh-TW');
+			
+			// 豐富的模擬數據
+			const mockData = {
+				totalProjects: 47,
+				onTimeProjects: 38,
+				lateProjects: 9,
+				totalVendors: 23,
+				totalInvestment: 280000000, // 2.8億
+				avgReturnRate: 15.8,
+				monthlyDue: 3,
+				riskProjects: 5,
+				projectStatus: {
+					'進行中': 18,
+					'已完成': 22,
+					'暫停': 3,
+					'待處理': 4
+				},
+				projectType: {
+					'科技': 20,
+					'製造': 12,
+					'醫療': 8,
+					'綠能': 7
+				},
+				regionDistribution: {
+					'北部': 18,
+					'南部': 12,
+					'中部': 10,
+					'東部': 7
+				},
+				investmentStage: {
+					'種子期': 8,
+					'成長期': 15,
+					'成熟期': 12,
+					'退出期': 12
+				},
+				monthlyMetrics: {
+					roi: 18.5,
+					efficiency: 92,
+					risk: 7.2,
+					satisfaction: 4.6
+				},
+				vendorLateData: [
+					{ name: '未來能源集團', lateCount: 5, lateRate: 31, lastLateDate: '2024-08-15', status: '嚴重警告' },
+					{ name: '精密機械製造', lateCount: 4, lateRate: 28, lastLateDate: '2024-08-20', status: '警告' },
+					{ name: '智慧科技股份有限公司', lateCount: 3, lateRate: 22, lastLateDate: '2024-08-18', status: '注意' },
+					{ name: '醫療器材公司', lateCount: 3, lateRate: 19, lastLateDate: '2024-08-10', status: '注意' },
+					{ name: '數位解決方案公司', lateCount: 2, lateRate: 15, lastLateDate: '2024-08-05', status: '正常' },
+					{ name: '自動化系統公司', lateCount: 2, lateRate: 14, lastLateDate: '2024-08-12', status: '正常' },
+					{ name: '綠能科技公司', lateCount: 2, lateRate: 13, lastLateDate: '2024-08-08', status: '正常' },
+					{ name: '生技研發公司', lateCount: 1, lateRate: 8, lastLateDate: '2024-07-30', status: '正常' },
+					{ name: '半導體製造', lateCount: 1, lateRate: 7, lastLateDate: '2024-07-25', status: '正常' },
+					{ name: '電動車科技', lateCount: 1, lateRate: 6, lastLateDate: '2024-07-20', status: '正常' }
+				]
+			};
+			
+			// 更新統計卡片
+			document.getElementById('totalProjects').textContent = mockData.totalProjects;
+			document.getElementById('onTimeProjects').textContent = mockData.onTimeProjects;
+			document.getElementById('lateProjects').textContent = mockData.lateProjects;
+			document.getElementById('totalVendors').textContent = mockData.totalVendors;
+			
+			// 更新第二排統計卡片
+			document.getElementById('totalInvestment').textContent = (mockData.totalInvestment / 100000000).toFixed(1) + '億';
+			document.getElementById('avgReturnRate').textContent = mockData.avgReturnRate + '%';
+			document.getElementById('monthlyDue').textContent = mockData.monthlyDue;
+			document.getElementById('riskProjects').textContent = mockData.riskProjects;
+			
+			// 計算比率
+			const onTimeRate = ((mockData.onTimeProjects / mockData.totalProjects) * 100).toFixed(1);
+			const lateRate = ((mockData.lateProjects / mockData.totalProjects) * 100).toFixed(1);
+			
+			document.getElementById('onTimeRate').textContent = onTimeRate + '%';
+			document.getElementById('lateRate').textContent = lateRate + '%';
+			
+			// 更新額外統計資訊
+			document.getElementById('monthlyNew').textContent = '12';
+			document.getElementById('monthlyCompleted').textContent = '8';
+			document.getElementById('monthlyProgress').textContent = '75%';
+			
+			document.getElementById('excellentVendors').textContent = '8';
+			document.getElementById('goodVendors').textContent = '7';
+			document.getElementById('fairVendors').textContent = '5';
+			document.getElementById('poorVendors').textContent = '3';
+			
+			// 更新地區分布
+			document.getElementById('northProjects').textContent = mockData.regionDistribution.北部;
+			document.getElementById('southProjects').textContent = mockData.regionDistribution.南部;
+			document.getElementById('centralProjects').textContent = mockData.regionDistribution.中部;
+			document.getElementById('eastProjects').textContent = mockData.regionDistribution.東部;
+			
+			// 更新投資階段
+			document.getElementById('seedStage').textContent = mockData.investmentStage.種子期;
+			document.getElementById('growthStage').textContent = mockData.investmentStage.成長期;
+			document.getElementById('matureStage').textContent = mockData.investmentStage.成熟期;
+			document.getElementById('exitStage').textContent = mockData.investmentStage.退出期;
+			
+			// 更新績效指標
+			document.getElementById('monthlyROI').textContent = mockData.monthlyMetrics.roi + '%';
+			document.getElementById('monthlyEfficiency').textContent = mockData.monthlyMetrics.efficiency + '%';
+			document.getElementById('monthlyRisk').textContent = mockData.monthlyMetrics.risk + '%';
+			document.getElementById('monthlySatisfaction').textContent = mockData.monthlyMetrics.satisfaction;
+			
+			// 繪製專案狀態分布圖
+			drawProjectStatusChart(mockData.projectStatus);
+			
+			// 繪製遲交統計圖
+			drawLateDeliveryChart(mockData.onTimeProjects, mockData.lateProjects);
+			
+			// 生成廠商遲交排行表格
+			generateVendorLateTable(mockData.vendorLateData);
+		}
+		
+		// 繪製專案狀態分布圖
+		function drawProjectStatusChart(data) {
+			const ctx = document.getElementById('projectStatusChart').getContext('2d');
+			
+			new Chart(ctx, {
+				type: 'doughnut',
+				data: {
+					labels: Object.keys(data),
+					datasets: [{
+						data: Object.values(data),
+						backgroundColor: [
+							'#6BB0B6',  // 青綠色
+							'#5a9ba1',  // 深青綠色
+							'#8bc5ca',  // 淺青綠色
+							'#f0f8f8'   // 極淺青綠色
+						],
+						borderWidth: 2,
+						borderColor: '#ffffff'
+					}]
+				},
+				options: {
+					responsive: true,
+					maintainAspectRatio: false,
+					plugins: {
+						legend: {
+							position: 'bottom'
+						}
+					}
+				}
+			});
+		}
+		
+		// 繪製遲交統計圖
+		function drawLateDeliveryChart(onTime, late) {
+			const ctx = document.getElementById('lateDeliveryChart').getContext('2d');
+			
+			new Chart(ctx, {
+				type: 'pie',
+				data: {
+					labels: ['準時交件', '遲交'],
+					datasets: [{
+						data: [onTime, late],
+						backgroundColor: [
+							'#28a745',  // 綠色
+							'#ffc107'   // 黃色
+						],
+						borderWidth: 2,
+						borderColor: '#ffffff'
+					}]
+				},
+				options: {
+					responsive: true,
+					maintainAspectRatio: false,
+					plugins: {
+						legend: {
+							position: 'bottom'
+						}
+					}
+				}
+			});
+		}
+		
+		// 生成廠商遲交排行表格
+		function generateVendorLateTable(data) {
+			const tbody = document.getElementById('vendorLateTable');
+			tbody.innerHTML = '';
+			
+			data.forEach((vendor, index) => {
+				const row = document.createElement('tr');
+				let badgeClass = 'bg-success';
+				let statusText = vendor.status;
+				
+				// 根據遲交率決定狀態顏色
+				if (vendor.lateRate >= 25) {
+					badgeClass = 'bg-danger';
+					statusText = '嚴重警告';
+				} else if (vendor.lateRate >= 15) {
+					badgeClass = 'bg-warning';
+					statusText = '警告';
+				} else if (vendor.lateRate >= 10) {
+					badgeClass = 'bg-info';
+					statusText = '注意';
+				} else {
+					badgeClass = 'bg-success';
+					statusText = '正常';
+				}
+				
+				row.innerHTML = `
+					<td><span class="badge bg-secondary">${index + 1}</span></td>
+					<td><strong>${vendor.name}</strong></td>
+					<td><span class="badge bg-warning">${vendor.lateCount}</span></td>
+					<td><span class="badge ${badgeClass}">${vendor.lateRate}%</span></td>
+					<td>${vendor.lastLateDate}</td>
+					<td><span class="badge ${badgeClass}">${statusText}</span></td>
+				`;
+				
+				tbody.appendChild(row);
+			});
+		}
+		
+		// 頁面載入完成後初始化儀表板
+		document.addEventListener('DOMContentLoaded', function() {
+			// 初始化儀表板
+			initializeDashboard();
+			
+			// 每5分鐘更新一次數據
+			setInterval(initializeDashboard, 5 * 60 * 1000);
+		});
 
 // 共編資料 - 股權型 功能
 document.getElementById('addSharedEquityForm').addEventListener('submit', function(e) {
