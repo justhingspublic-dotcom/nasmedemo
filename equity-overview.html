@@ -1,0 +1,1481 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>股權案件概況 - 專案管理系統</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;600&display=swap" rel="stylesheet">
+	<style>
+		:root { 
+			--bs-body-font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text","SF Pro Display","Noto Sans TC","Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang TC", "Microsoft JhengHei", sans-serif; 
+			--bs-primary: #6BB0B6; /* 青綠色主色 */
+			--bs-secondary: #6BB0B6; /* 青綠色次要色 */
+		}
+		
+		/* 自定義青綠色主題 */
+		.bg-primary {
+			background-color: #6BB0B6 !important;
+		}
+		
+		.btn-primary {
+			background-color: #6BB0B6 !important;
+			border-color: #6BB0B6 !important;
+		}
+		
+		.btn-primary:hover {
+			background-color: #5a9ba1 !important;
+			border-color: #5a9ba1 !important;
+		}
+		
+		.btn-outline-primary {
+			color: #6BB0B6 !important;
+			border-color: #6BB0B6 !important;
+		}
+		
+		.btn-outline-primary:hover {
+			background-color: #6BB0B6 !important;
+			color: #ffffff !important;
+		}
+		
+		.form-control:focus {
+			border-color: #6BB0B6 !important;
+			box-shadow: 0 0 0 0.2rem rgba(107, 176, 182, 0.25) !important;
+		}
+		
+		.form-select:focus {
+			border-color: #6BB0B6 !important;
+			box-shadow: 0 0 0 0.2rem rgba(107, 176, 182, 0.25) !important;
+		}
+		
+		.nav-tabs .nav-link.active {
+			background-color: #6BB0B6 !important;
+			border-color: #6BB0B6 !important;
+			color: #ffffff !important;
+		}
+		
+		.nav-tabs .nav-link:hover {
+			border-color: #6BB0B6 !important;
+		}
+		
+		/* 投資進度分析輸入框樣式 */
+		.investment-progress input[type="number"] {
+			border: 2px solid #e0e0e0;
+			border-radius: 6px;
+			text-align: center;
+			font-weight: 600;
+			color: #6BB0B6;
+			transition: all 0.3s ease;
+		}
+		
+		.investment-progress input[type="number"]:focus {
+			border-color: #6BB0B6;
+			box-shadow: 0 0 0 0.2rem rgba(107, 176, 182, 0.25);
+			transform: scale(1.05);
+		}
+		
+		.investment-progress input[type="number"]:hover {
+			border-color: #6BB0B6;
+		}
+	</style>
+</head>
+<body class="bg-light">
+	<div class="container-fluid p-4">
+		<div class="card">
+			<div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+				<h5 class="mb-0">股權案件概況</h5>
+				<button class="btn btn-light btn-sm" onclick="saveForm()">
+					<i class="bi bi-save me-1"></i>存檔
+				</button>
+			</div>
+			<div class="card-body">
+				<form id="equityForm">
+					<div class="row g-3">
+						<!-- 第一行：案件名稱、案件類型、專案國隊 -->
+						<div class="col-md-4">
+							<label for="caseName" class="form-label">案件名稱 <span class="text-danger">*</span></label>
+							<input type="text" class="form-control" id="caseName" required>
+						</div>
+						<div class="col-md-4">
+							<label for="caseType" class="form-label">案件類型 <span class="text-danger">*</span></label>
+							<select class="form-select" id="caseType" required>
+								<option value="">請選擇案件類型</option>
+								<option value="股權型" selected>股權型</option>
+								<option value="專案型">專案型</option>
+								<option value="其他">其他</option>
+							</select>
+						</div>
+						<div class="col-md-4">
+							<label for="projectTeam" class="form-label">專案國隊 <span class="text-danger">*</span></label>
+							<select class="form-select" id="projectTeam" required>
+								<option value="">請選擇專案國隊</option>
+								<option value="台灣">台灣</option>
+								<option value="中國">中國</option>
+								<option value="美國">美國</option>
+								<option value="歐洲">歐洲</option>
+								<option value="其他">其他</option>
+							</select>
+						</div>
+
+						<!-- 第二行：投資期間 -->
+						<div class="col-md-3">
+							<label for="investmentStart" class="form-label">投資期間 <span class="text-danger">*</span></label>
+							<input type="date" class="form-control" id="investmentStart" placeholder="年/月/日">
+						</div>
+						<div class="col-md-3">
+							<label for="investmentEnd" class="form-label">&nbsp;</label>
+							<input type="date" class="form-control" id="investmentEnd" placeholder="年/月/日">
+						</div>
+						<div class="col-md-3">
+							<label for="contact" class="form-label">聯絡人 <span class="text-danger">*</span></label>
+							<input type="text" class="form-control" id="contact" required>
+						</div>
+						<div class="col-md-3">
+							<label for="contactMethod" class="form-label">聯絡方式 <span class="text-danger">*</span></label>
+							<input type="text" class="form-control" id="contactMethod" placeholder="電話/Email" required>
+						</div>
+
+						<!-- 第三行：投資等級、投資金額、投資負責人員 -->
+						<div class="col-md-4">
+							<label for="investmentLevel" class="form-label">投資等級 <span class="text-danger">*</span></label>
+							<select class="form-select" id="investmentLevel" required>
+								<option value="">請選擇投資等級</option>
+								<option value="A級">A級</option>
+								<option value="B級">B級</option>
+								<option value="C級">C級</option>
+							</select>
+						</div>
+						<div class="col-md-4">
+							<label for="investAmount" class="form-label">投資金額 <span class="text-danger">*</span></label>
+							<input type="text" class="form-control" id="investAmount" placeholder="請輸入金額" required>
+						</div>
+						<div class="col-md-4">
+							<label for="investManager" class="form-label">投資負責人員 <span class="text-danger">*</span></label>
+							<select class="form-select" id="investManager" required>
+								<option value="">請選擇負責人員</option>
+								<option value="張經理">張經理</option>
+								<option value="李專員">李專員</option>
+								<option value="王總監">王總監</option>
+							</select>
+						</div>
+
+						<!-- 第四行：投後管理人員、持股比例 -->
+						<div class="col-md-4">
+							<label for="postInvestManager" class="form-label">投後管理人員 <span class="text-danger">*</span></label>
+							<select class="form-select" id="postInvestManager" required>
+								<option value="">請選擇管理人員</option>
+								<option value="陳經理">陳經理</option>
+								<option value="林專員">林專員</option>
+								<option value="吳主任">吳主任</option>
+							</select>
+						</div>
+						<div class="col-md-4">
+							<label for="equityRatio" class="form-label">持股比例 <span class="text-danger">*</span></label>
+							<input type="text" class="form-control" id="equityRatio" placeholder="例如：25%" required>
+						</div>
+						<div class="col-md-4">
+							<label for="boardSeats" class="form-label">董事會席次</label>
+							<input type="number" class="form-control" id="boardSeats" placeholder="席次數量">
+						</div>
+
+						<!-- 資金用途 -->
+						<div class="col-12">
+							<label for="fundUsage" class="form-label">資金用途</label>
+							<textarea class="form-control" id="fundUsage" rows="4" placeholder="請詳細說明資金使用用途..."></textarea>
+						</div>
+
+						<!-- 公司基本資料展開區域 -->
+						<div class="col-12">
+							<div class="card mt-3">
+								<div class="card-header">
+									<button class="btn btn-link text-decoration-none text-dark w-100 text-start p-0" type="button" data-bs-toggle="collapse" data-bs-target="#companyDataCollapse" aria-expanded="false">
+										<div class="d-flex justify-content-between align-items-center">
+											<h6 class="mb-0">公司基本資料</h6>
+											<i class="bi bi-chevron-down" id="companyToggleIcon"></i>
+										</div>
+									</button>
+								</div>
+								<div class="collapse" id="companyDataCollapse">
+									<div class="card-body">
+										<div class="row g-3">
+											<!-- 第一行：董事長、產業、主要產品 -->
+											<div class="col-md-4">
+												<label for="chairman" class="form-label">董事長 <span class="text-danger">*</span></label>
+												<select class="form-select" id="chairman" required>
+													<option value="">請選擇董事長</option>
+													<option value="張董事長">張董事長</option>
+													<option value="李董事長">李董事長</option>
+													<option value="王董事長">王董事長</option>
+													<option value="陳董事長">陳董事長</option>
+												</select>
+											</div>
+											<div class="col-md-4">
+												<label for="industry" class="form-label">產業 <span class="text-danger">*</span></label>
+												<select class="form-select" id="industry" required>
+													<option value="">請選擇產業類別</option>
+													<option value="科技業">科技業</option>
+													<option value="製造業">製造業</option>
+													<option value="服務業">服務業</option>
+													<option value="金融業">金融業</option>
+													<option value="生技醫療">生技醫療</option>
+													<option value="其他">其他</option>
+												</select>
+											</div>
+											<div class="col-md-4">
+												<label for="mainProduct" class="form-label">主要產品 <span class="text-danger">*</span></label>
+												<select class="form-select" id="mainProduct" required>
+													<option value="">請選擇主要產品</option>
+													<option value="軟體開發">軟體開發</option>
+													<option value="硬體製造">硬體製造</option>
+													<option value="系統整合">系統整合</option>
+													<option value="諮詢服務">諮詢服務</option>
+													<option value="其他">其他</option>
+												</select>
+											</div>
+
+											<!-- 第二行：主管人員、公司網址、成立日期 -->
+											<div class="col-md-4">
+												<label for="manager" class="form-label">主管人員 <span class="text-danger">*</span></label>
+												<select class="form-select" id="manager" required>
+													<option value="">請選擇主管人員</option>
+													<option value="總經理">總經理</option>
+													<option value="副總經理">副總經理</option>
+													<option value="營運長">營運長</option>
+													<option value="技術長">技術長</option>
+													<option value="財務長">財務長</option>
+												</select>
+											</div>
+											<div class="col-md-4">
+												<label for="companyWebsite" class="form-label">公司網址</label>
+												<input type="url" class="form-control" id="companyWebsite" placeholder="https://www.example.com">
+											</div>
+											<div class="col-md-4">
+												<label for="establishDate" class="form-label">成立日期 <span class="text-danger">*</span></label>
+												<input type="date" class="form-control" id="establishDate" placeholder="年/月/日" required>
+											</div>
+
+											<!-- 第三行：公司地址 -->
+											<div class="col-12">
+												<label for="companyAddress" class="form-label">公司地址 <span class="text-danger">*</span></label>
+												<input type="text" class="form-control" id="companyAddress" placeholder="請輸入完整地址" required>
+											</div>
+
+											<!-- 第四行：實收資本額、員工人數 -->
+											<div class="col-md-6">
+												<label for="paidCapital" class="form-label">實收資本額 <span class="text-danger">*</span></label>
+												<input type="text" class="form-control" id="paidCapital" placeholder="請輸入金額（萬元）" required>
+											</div>
+											<div class="col-md-6">
+												<label for="employeeCount" class="form-label">員工人數 <span class="text-danger">*</span></label>
+												<input type="number" class="form-control" id="employeeCount" placeholder="請輸入員工人數" required>
+											</div>
+
+											<!-- 第五行：營業記錄 -->
+											<div class="col-12">
+												<label for="businessRecord" class="form-label">營業記錄</label>
+												<textarea class="form-control" id="businessRecord" rows="3" placeholder="請輸入營業記錄概述 Enter 換行"></textarea>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- 股權投資詳細資訊展開區域 -->
+						<div class="col-12">
+							<div class="card mt-3">
+								<div class="card-header">
+									<button class="btn btn-link text-decoration-none text-dark w-100 text-start p-0" type="button" data-bs-toggle="collapse" data-bs-target="#equityDetailsCollapse" aria-expanded="false">
+										<div class="d-flex justify-content-between align-items-center">
+											<h6 class="mb-0">股權投資詳細資訊</h6>
+											<i class="bi bi-chevron-down" id="equityDetailsToggleIcon"></i>
+										</div>
+									</button>
+								</div>
+								<div class="collapse" id="equityDetailsCollapse">
+									<div class="card-body">
+										<div class="row g-3">
+											<!-- 投資階段 -->
+											<div class="col-md-4">
+												<label for="investmentStage" class="form-label">投資階段 <span class="text-danger">*</span></label>
+												<select class="form-select" id="investmentStage" required>
+													<option value="">請選擇投資階段</option>
+													<option value="種子輪">種子輪</option>
+													<option value="天使輪">天使輪</option>
+													<option value="A輪">A輪</option>
+													<option value="B輪">B輪</option>
+													<option value="C輪">C輪</option>
+													<option value="D輪">D輪</option>
+													<option value="IPO">IPO</option>
+												</select>
+											</div>
+											<div class="col-md-4">
+												<label for="valuation" class="form-label">公司估值</label>
+												<input type="text" class="form-control" id="valuation" placeholder="請輸入估值金額">
+											</div>
+											<div class="col-md-4">
+												<label for="exitStrategy" class="form-label">退出策略</label>
+												<select class="form-select" id="exitStrategy">
+													<option value="">請選擇退出策略</option>
+													<option value="IPO">IPO</option>
+													<option value="併購">併購</option>
+													<option value="股權轉讓">股權轉讓</option>
+													<option value="回購">回購</option>
+													<option value="其他">其他</option>
+												</select>
+											</div>
+
+											<!-- 預期退出時間 -->
+											<div class="col-md-6">
+												<label for="expectedExit" class="form-label">預期退出時間</label>
+												<input type="date" class="form-control" id="expectedExit" placeholder="年/月/日">
+											</div>
+											<div class="col-md-6">
+												<label for="expectedReturn" class="form-label">預期報酬率</label>
+												<input type="text" class="form-control" id="expectedReturn" placeholder="例如：300%">
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+                        <!-- 檔案審核回覆展開區域 -->
+                        <div class="col-12">
+                            <div class="card mt-3">
+                                <div class="card-header">
+                                    <button class="btn btn-link text-decoration-none text-dark w-100 text-start p-0" type="button" data-bs-toggle="collapse" data-bs-target="#fileReviewCollapse" aria-expanded="false">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <h6 class="mb-0">檔案審核回覆</h6>
+                                            <i class="bi bi-chevron-down" id="fileReviewToggleIcon"></i>
+                                        </div>
+                                    </button>
+                                </div>
+                                <div class="collapse" id="fileReviewCollapse">
+                                    <div class="card-body">
+                                        <!-- 新增檔案按鈕 -->
+                                        <div class="mb-3">
+                                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="addNewFileRow()">
+                                                <i class="bi bi-plus-circle me-1"></i>新增檔案
+                                            </button>
+                                        </div>
+                                        
+                                        <!-- 檔案列表表格 -->
+                                        <div class="table-responsive">
+                                            <table class="table table-sm table-hover" id="fileReviewTable">
+                                                <thead class="table-light">
+                                                    <tr>
+                                                        <th style="width: 12%;">工作項目</th>
+                                                        <th style="width: 12%;">繳交時間</th>
+                                                        <th style="width: 15%;">文件內容</th>
+                                                        <th style="width: 12%;">上傳時間</th>
+                                                        <th style="width: 15%;">檔案名稱</th>
+                                                        <th style="width: 20%;">回覆</th>
+                                                        <th style="width: 10%;">驗收狀態</th>
+                                                        <th style="width: 4%;">操作</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="fileReviewTableBody">
+                                                    <tr id="fileRow1">
+                                                        <td>
+                                                            <input type="text" class="form-control form-control-sm" value="商業計劃書" placeholder="請輸入工作項目">
+                                                        </td>
+                                                        <td>
+                                                            <input type="date" class="form-control form-control-sm" value="2025-07-30">
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" class="form-control form-control-sm" value="包含市場分析、財務預測等" placeholder="請輸入文件內容">
+                                                        </td>
+                                                        <td>
+                                                            <input type="datetime-local" class="form-control form-control-sm" value="2025-07-28T14:30">
+                                                        </td>
+                                                        <td>
+                                                            <div class="d-flex align-items-center">
+                                                                <i class="bi bi-file-pdf text-danger me-2"></i>
+                                                                <input type="text" class="form-control form-control-sm" value="business_plan_v2.pdf" placeholder="檔案名稱">
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <textarea class="form-control form-control-sm" rows="2" placeholder="請輸入回覆內容...">請補充回應內容...</textarea>
+                                                        </td>
+                                                        <td>
+                                                            <select class="form-select form-select-sm">
+                                                                <option value="通過">通過</option>
+                                                                <option value="退回" selected>退回</option>
+                                                                <option value="待審">待審</option>
+                                                            </select>
+                                                        </td>
+                                                        <td>
+                                                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeFileRow('fileRow1')">
+                                                                <i class="bi bi-trash"></i>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                    <tr id="fileRow2">
+                                                        <td>
+                                                            <input type="text" class="form-control form-control-sm" value="財務報表" placeholder="請輸入工作項目">
+                                                        </td>
+                                                        <td>
+                                                            <input type="date" class="form-control form-control-sm" value="2025-07-25">
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" class="form-control form-control-sm" value="前三年財務報表" placeholder="請輸入文件內容">
+                                                        </td>
+                                                        <td>
+                                                            <input type="datetime-local" class="form-control form-control-sm" value="2025-07-24T16:45">
+                                                        </td>
+                                                        <td>
+                                                            <div class="d-flex align-items-center">
+                                                                <i class="bi bi-file-excel text-success me-2"></i>
+                                                                <input type="text" class="form-control form-control-sm" value="financial_statements.xlsx" placeholder="檔案名稱">
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <textarea class="form-control form-control-sm" rows="2" placeholder="請輸入回覆內容...">請補充現金流量表</textarea>
+                                                        </td>
+                                                        <td>
+                                                            <select class="form-select form-select-sm">
+                                                                <option value="通過">通過</option>
+                                                                <option value="退回" selected>退回</option>
+                                                                <option value="待審">待審</option>
+                                                            </select>
+                                                        </td>
+                                                        <td>
+                                                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeFileRow('fileRow2')">
+                                                                <i class="bi bi-trash"></i>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                    <tr id="fileRow3">
+                                                        <td>
+                                                            <input type="text" class="form-control form-control-sm" value="技術文件" placeholder="請輸入工作項目">
+                                                        </td>
+                                                        <td>
+                                                            <input type="date" class="form-control form-control-sm" value="2025-07-20">
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" class="form-control form-control-sm" value="產品技術規格說明" placeholder="請輸入文件內容">
+                                                        </td>
+                                                        <td>
+                                                            <input type="datetime-local" class="form-control form-control-sm" value="2025-07-19T10:15">
+                                                        </td>
+                                                        <td>
+                                                            <div class="d-flex align-items-center">
+                                                                <i class="bi bi-file-word text-primary me-2"></i>
+                                                                <input type="text" class="form-control form-control-sm" value="tech_specs.docx" placeholder="檔案名稱">
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <textarea class="form-control form-control-sm" rows="2" placeholder="請輸入回覆內容...">文件內容完整，符合要求</textarea>
+                                                        </td>
+                                                        <td>
+                                                            <select class="form-select form-select-sm">
+                                                                <option value="通過" selected>通過</option>
+                                                                <option value="退回">退回</option>
+                                                                <option value="待審">待審</option>
+                                                            </select>
+                                                        </td>
+                                                        <td>
+                                                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeFileRow('fileRow3')">
+                                                                <i class="bi bi-trash"></i>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                    <tr id="fileRow4">
+                                                        <td>
+                                                            <input type="text" class="form-control form-control-sm" value="市場調研報告" placeholder="請輸入工作項目">
+                                                        </td>
+                                                        <td>
+                                                            <input type="date" class="form-control form-control-sm" value="2025-08-10">
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" class="form-control form-control-sm" value="目標市場分析報告" placeholder="請輸入文件內容">
+                                                        </td>
+                                                        <td>
+                                                            <input type="datetime-local" class="form-control form-control-sm" value="2025-07-30T09:20">
+                                                        </td>
+                                                        <td>
+                                                            <div class="d-flex align-items-center">
+                                                                <i class="bi bi-file-pdf text-danger me-2"></i>
+                                                                <input type="text" class="form-control form-control-sm" value="market_research.pdf" placeholder="檔案名稱">
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <textarea class="form-control form-control-sm" rows="2" placeholder="請輸入回覆內容...">數據來源不足，請重新補交</textarea>
+                                                        </td>
+                                                        <td>
+                                                            <select class="form-select form-select-sm">
+                                                                <option value="通過">通過</option>
+                                                                <option value="退回" selected>退回</option>
+                                                                <option value="待審">待審</option>
+                                                            </select>
+                                                        </td>
+                                                        <td>
+                                                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeFileRow('fileRow4')">
+                                                                <i class="bi bi-trash"></i>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                    <tr id="fileRow5">
+                                                        <td>
+                                                            <input type="text" class="form-control form-control-sm" value="營運企劃書" placeholder="請輸入工作項目">
+                                                        </td>
+                                                        <td>
+                                                            <input type="date" class="form-control form-control-sm" value="2025-08-05">
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" class="form-control form-control-sm" value="未來三年營運規劃" placeholder="請輸入文件內容">
+                                                        </td>
+                                                        <td>
+                                                            <input type="datetime-local" class="form-control form-control-sm" value="2025-08-01T11:30">
+                                                        </td>
+                                                        <td>
+                                                            <div class="d-flex align-items-center">
+                                                                <i class="bi bi-file-ppt text-warning me-2"></i>
+                                                                <input type="text" class="form-control form-control-sm" value="operation_plan.pptx" placeholder="檔案名稱">
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <textarea class="form-control form-control-sm" rows="2" placeholder="請輸入回覆內容...">請補充回應內容...</textarea>
+                                                        </td>
+                                                        <td>
+                                                            <select class="form-select form-select-sm">
+                                                                <option value="通過">通過</option>
+                                                                <option value="退回">退回</option>
+                                                                <option value="待審" selected>待審</option>
+                                                            </select>
+                                                        </td>
+                                                        <td>
+                                                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeFileRow('fileRow5')">
+                                                                <i class="bi bi-trash"></i>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 損益分析展開區域 -->
+                        <div class="col-12">
+                            <div class="card mt-3">
+                                <div class="card-header">
+                                    <button class="btn btn-link text-decoration-none text-dark w-100 text-start p-0" type="button" data-bs-toggle="collapse" data-bs-target="#profitAnalysisCollapse" aria-expanded="false">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <h6 class="mb-0">損益分析</h6>
+                                            <i class="bi bi-chevron-down" id="profitAnalysisToggleIcon"></i>
+                                        </div>
+                                    </button>
+                                </div>
+                                <div class="collapse" id="profitAnalysisCollapse">
+                                    <div class="card-body">
+                                        <!-- 新增項目按鈕 -->
+                                        <div class="mb-3">
+                                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="addNewProfitRow()">
+                                                <i class="bi bi-plus-circle me-1"></i>新增項目
+                                            </button>
+                                        </div>
+                                        
+                                        <!-- 損益分析表格 -->
+                                        <div class="table-responsive">
+                                            <table class="table table-sm table-hover" id="profitAnalysisTable">
+                                                <thead class="table-light">
+                                                    <tr>
+                                                        <th style="width: 12%;">工作項目</th>
+                                                        <th style="width: 10%;">本期實際</th>
+                                                        <th style="width: 10%;">去年同期</th>
+                                                        <th style="width: 8%;">成長率</th>
+                                                        <th style="width: 12%;">本期預估</th>
+                                                        <th style="width: 10%;">達成率</th>
+                                                        <th style="width: 15%;">本期實際vs去年同期</th>
+                                                        <th style="width: 10%;">達成率</th>
+                                                        <th style="width: 15%;">本期實際vs本期預估</th>
+                                                        <th style="width: 3%;">操作</th>
+                                                    </tr>
+                                                    <tr class="table-secondary">
+                                                        <th></th>
+                                                        <th>單位</th>
+                                                        <th>113年1-9月</th>
+                                                        <th>112年1-9月</th>
+                                                        <th></th>
+                                                        <th>本期預估vs去年同期</th>
+                                                        <th>113年1-9月</th>
+                                                        <th></th>
+                                                        <th>本期實際vs本期預估</th>
+                                                        <th></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="profitAnalysisTableBody">
+                                                    <tr id="profitRow1">
+                                                        <td>
+                                                            <input type="text" class="form-control form-control-sm" value="營業收入" placeholder="請輸入項目名稱">
+                                                        </td>
+                                                        <td>
+                                                            <select class="form-select form-select-sm">
+                                                                <option value="千元" selected>千元</option>
+                                                                <option value="萬元">萬元</option>
+                                                                <option value="百萬元">百萬元</option>
+                                                                <option value="%">%</option>
+                                                            </select>
+                                                        </td>
+                                                        <td>
+                                                            <input type="number" class="form-control form-control-sm" value="85000" placeholder="0">
+                                                        </td>
+                                                        <td>
+                                                            <input type="number" class="form-control form-control-sm" value="75000" placeholder="0">
+                                                        </td>
+                                                        <td>
+                                                            <span class="text-success fw-bold">13.3%</span>
+                                                        </td>
+                                                        <td>
+                                                            <input type="number" class="form-control form-control-sm" value="90000" placeholder="0">
+                                                        </td>
+                                                        <td>
+                                                            <span class="text-danger fw-bold">94.4%</span>
+                                                        </td>
+                                                        <td>
+                                                            <span class="text-success fw-bold">13.3%</span>
+                                                        </td>
+                                                        <td>
+                                                            <span class="text-danger fw-bold">94.4%</span>
+                                                        </td>
+                                                        <td>
+                                                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeProfitRow('profitRow1')">
+                                                                <i class="bi bi-x"></i>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                    <tr id="profitRow2">
+                                                        <td>
+                                                            <input type="text" class="form-control form-control-sm" value="營業成本" placeholder="請輸入項目名稱">
+                                                        </td>
+                                                        <td>
+                                                            <select class="form-select form-select-sm">
+                                                                <option value="千元" selected>千元</option>
+                                                                <option value="萬元">萬元</option>
+                                                                <option value="百萬元">百萬元</option>
+                                                                <option value="%">%</option>
+                                                            </select>
+                                                        </td>
+                                                        <td>
+                                                            <input type="number" class="form-control form-control-sm" value="55000" placeholder="0">
+                                                        </td>
+                                                        <td>
+                                                            <input type="number" class="form-control form-control-sm" value="50000" placeholder="0">
+                                                        </td>
+                                                        <td>
+                                                            <span class="text-success fw-bold">10.0%</span>
+                                                        </td>
+                                                        <td>
+                                                            <input type="number" class="form-control form-control-sm" value="58000" placeholder="0">
+                                                        </td>
+                                                        <td>
+                                                            <span class="text-danger fw-bold">94.8%</span>
+                                                        </td>
+                                                        <td>
+                                                            <span class="text-success fw-bold">10.0%</span>
+                                                        </td>
+                                                        <td>
+                                                            <span class="text-danger fw-bold">94.8%</span>
+                                                        </td>
+                                                        <td>
+                                                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeProfitRow('profitRow2')">
+                                                                <i class="bi bi-x"></i>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                    <tr id="profitRow3">
+                                                        <td>
+                                                            <input type="text" class="form-control form-control-sm" value="毛利" placeholder="請輸入項目名稱">
+                                                        </td>
+                                                        <td>
+                                                            <select class="form-select form-select-sm">
+                                                                <option value="千元" selected>千元</option>
+                                                                <option value="萬元">萬元</option>
+                                                                <option value="百萬元">百萬元</option>
+                                                                <option value="%">%</option>
+                                                            </select>
+                                                        </td>
+                                                        <td>
+                                                            <input type="number" class="form-control form-control-sm" value="30000" placeholder="0">
+                                                        </td>
+                                                        <td>
+                                                            <input type="number" class="form-control form-control-sm" value="25000" placeholder="0">
+                                                        </td>
+                                                        <td>
+                                                            <span class="text-success fw-bold">20.0%</span>
+                                                        </td>
+                                                        <td>
+                                                            <input type="number" class="form-control form-control-sm" value="32000" placeholder="0">
+                                                        </td>
+                                                        <td>
+                                                            <span class="text-danger fw-bold">93.8%</span>
+                                                        </td>
+                                                        <td>
+                                                            <span class="text-success fw-bold">20.0%</span>
+                                                        </td>
+                                                        <td>
+                                                            <span class="text-danger fw-bold">93.8%</span>
+                                                        </td>
+                                                        <td>
+                                                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeProfitRow('profitRow3')">
+                                                                <i class="bi bi-x"></i>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                    <tr id="profitRow4">
+                                                        <td>
+                                                            <input type="text" class="form-control form-control-sm" value="營業費用" placeholder="請輸入項目名稱">
+                                                        </td>
+                                                        <td>
+                                                            <select class="form-select form-select-sm">
+                                                                <option value="千元" selected>千元</option>
+                                                                <option value="萬元">萬元</option>
+                                                                <option value="百萬元">百萬元</option>
+                                                                <option value="%">%</option>
+                                                            </select>
+                                                        </td>
+                                                        <td>
+                                                            <input type="number" class="form-control form-control-sm" value="18000" placeholder="0">
+                                                        </td>
+                                                        <td>
+                                                            <input type="number" class="form-control form-control-sm" value="16000" placeholder="0">
+                                                        </td>
+                                                        <td>
+                                                            <span class="text-success fw-bold">12.5%</span>
+                                                        </td>
+                                                        <td>
+                                                            <input type="number" class="form-control form-control-sm" value="19000" placeholder="0">
+                                                        </td>
+                                                        <td>
+                                                            <span class="text-danger fw-bold">94.7%</span>
+                                                        </td>
+                                                        <td>
+                                                            <span class="text-success fw-bold">12.5%</span>
+                                                        </td>
+                                                        <td>
+                                                            <span class="text-danger fw-bold">94.7%</span>
+                                                        </td>
+                                                        <td>
+                                                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeProfitRow('profitRow4')">
+                                                                <i class="bi bi-x"></i>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                    <tr id="profitRow5">
+                                                        <td>
+                                                            <input type="text" class="form-control form-control-sm" value="營業利益" placeholder="請輸入項目名稱">
+                                                        </td>
+                                                        <td>
+                                                            <select class="form-select form-select-sm">
+                                                                <option value="千元" selected>千元</option>
+                                                                <option value="萬元">萬元</option>
+                                                                <option value="百萬元">百萬元</option>
+                                                                <option value="%">%</option>
+                                                            </select>
+                                                        </td>
+                                                        <td>
+                                                            <input type="number" class="form-control form-control-sm" value="12000" placeholder="0">
+                                                        </td>
+                                                        <td>
+                                                            <input type="number" class="form-control form-control-sm" value="9000" placeholder="0">
+                                                        </td>
+                                                        <td>
+                                                            <span class="text-success fw-bold">33.3%</span>
+                                                        </td>
+                                                        <td>
+                                                            <input type="number" class="form-control form-control-sm" value="13000" placeholder="0">
+                                                        </td>
+                                                        <td>
+                                                            <span class="text-danger fw-bold">92.3%</span>
+                                                        </td>
+                                                        <td>
+                                                            <span class="text-success fw-bold">33.3%</span>
+                                                        </td>
+                                                        <td>
+                                                            <span class="text-danger fw-bold">92.3%</span>
+                                                        </td>
+                                                        <td>
+                                                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeProfitRow('profitRow5')">
+                                                                <i class="bi bi-x"></i>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                    <tr id="profitRow6">
+                                                        <td>
+                                                            <input type="text" class="form-control form-control-sm" value="新項目" placeholder="請輸入項目名稱">
+                                                        </td>
+                                                        <td>
+                                                            <select class="form-select form-select-sm">
+                                                                <option value="千元" selected>千元</option>
+                                                                <option value="萬元">萬元</option>
+                                                                <option value="百萬元">百萬元</option>
+                                                                <option value="%">%</option>
+                                                            </select>
+                                                        </td>
+                                                        <td>
+                                                            <input type="number" class="form-control form-control-sm" value="0" placeholder="0">
+                                                        </td>
+                                                        <td>
+                                                            <input type="number" class="form-control form-control-sm" value="0" placeholder="0">
+                                                        </td>
+                                                        <td>
+                                                            <span class="text-muted">0.0%</span>
+                                                        </td>
+                                                        <td>
+                                                            <input type="number" class="form-control form-control-sm" value="0" placeholder="0">
+                                                        </td>
+                                                        <td>
+                                                            <span class="text-muted">0.0%</span>
+                                                        </td>
+                                                        <td>
+                                                            <span class="text-muted">0.0%</span>
+                                                        </td>
+                                                        <td>
+                                                            <span class="text-muted">0.0%</span>
+                                                        </td>
+                                                        <td>
+                                                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeProfitRow('profitRow6')">
+                                                                <i class="bi bi-x"></i>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 參與投資情形及訪視展開區域 -->
+                        <div class="col-12">
+                            <div class="card mt-3">
+                                <div class="card-header">
+                                    <button class="btn btn-link text-decoration-none text-dark w-100 text-start p-0" type="button" data-bs-toggle="collapse" data-bs-target="#investmentVisitCollapse" aria-expanded="false">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <h6 class="mb-0">參與投資情形及訪視</h6>
+                                            <i class="bi bi-chevron-down" id="investmentVisitToggleIcon"></i>
+                                        </div>
+                                    </button>
+                                </div>
+                                <div class="collapse" id="investmentVisitCollapse">
+                                    <div class="card-body">
+                                        <!-- 投資基本資訊 -->
+                                        <h6 class="mb-3 text-dark">投資基本資訊</h6>
+                                        <div class="table-responsive mb-4">
+                                            <table class="table table-bordered table-sm">
+                                                <tbody>
+                                                    <tr>
+                                                        <td rowspan="3" class="align-middle bg-light text-center fw-bold" style="width: 8%;">參與投資情形</td>
+                                                        <td class="bg-light fw-bold" style="width: 15%;">投資日期</td>
+                                                        <td style="width: 12%;">
+                                                            <input type="date" class="form-control form-control-sm" value="2023-01-15">
+                                                        </td>
+                                                        <td class="bg-light fw-bold" style="width: 15%;">投資金額</td>
+                                                        <td style="width: 12%;">
+                                                            <input type="number" class="form-control form-control-sm" value="0" placeholder="金額">
+                                                        </td>
+                                                        <td class="bg-light fw-bold" style="width: 15%;">投資股數或股比</td>
+                                                        <td style="width: 12%;">
+                                                            <input type="text" class="form-control form-control-sm" value="0.00%" placeholder="比例">
+                                                        </td>
+                                                        <td class="bg-light fw-bold" style="width: 15%;">投資股數或股數</td>
+                                                        <td style="width: 6%;">
+                                                            <input type="number" class="form-control form-control-sm" value="0" placeholder="股數">
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="bg-light fw-bold">截至目前投資金額</td>
+                                                        <td>
+                                                            <input type="number" class="form-control form-control-sm" value="0" placeholder="金額">
+                                                        </td>
+                                                        <td class="bg-light fw-bold">目前投資股比</td>
+                                                        <td>
+                                                            <input type="text" class="form-control form-control-sm" value="0.00%" placeholder="比例">
+                                                        </td>
+                                                        <td class="bg-light fw-bold">目前投資股數</td>
+                                                        <td>
+                                                            <input type="number" class="form-control form-control-sm" value="0" placeholder="股數">
+                                                        </td>
+                                                        <td class="bg-light fw-bold">投資股數或股數</td>
+                                                        <td>
+                                                            <input type="number" class="form-control form-control-sm" value="0" placeholder="股數">
+                                                        </td>
+                                                    </tr>
+                                                    <tr class="table-warning">
+                                                        <td class="bg-light fw-bold">投資累計報酬（ROI）%</td>
+                                                        <td>
+                                                            <input type="number" class="form-control form-control-sm" value="-100.00" step="0.01" placeholder="報酬率">
+                                                        </td>
+                                                        <td class="bg-light fw-bold">年度報酬（年間）</td>
+                                                        <td>
+                                                            <input type="number" class="form-control form-control-sm" value="-100.00" step="0.01" placeholder="年報酬率">
+                                                        </td>
+                                                        <td class="bg-light fw-bold">實際報酬（年間）</td>
+                                                        <td>
+                                                            <input type="number" class="form-control form-control-sm" value="-66.60" step="0.01" placeholder="實際報酬">
+                                                        </td>
+                                                        <td class="bg-light fw-bold">投資董事會席次</td>
+                                                        <td>
+                                                            <input type="number" class="form-control form-control-sm" value="-66.60" step="0.01" placeholder="席次">
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td rowspan="2" class="align-middle bg-light text-center fw-bold">訪視</td>
+                                                        <td class="bg-light fw-bold">訪視日期</td>
+                                                        <td>
+                                                            <input type="date" class="form-control form-control-sm">
+                                                        </td>
+                                                        <td class="bg-light fw-bold">訪視地點</td>
+                                                        <td>
+                                                            <input type="text" class="form-control form-control-sm" placeholder="地點">
+                                                        </td>
+                                                        <td class="bg-light fw-bold">訪視地點</td>
+                                                        <td>
+                                                            <input type="text" class="form-control form-control-sm" placeholder="地點">
+                                                        </td>
+                                                        <td class="bg-light fw-bold">訪問人員</td>
+                                                        <td>
+                                                            <input type="text" class="form-control form-control-sm" placeholder="人員">
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="bg-light fw-bold">訪視對象</td>
+                                                        <td>
+                                                            <input type="text" class="form-control form-control-sm" placeholder="對象">
+                                                        </td>
+                                                        <td class="bg-light fw-bold">訪視地點</td>
+                                                        <td>
+                                                            <input type="text" class="form-control form-control-sm" placeholder="地點">
+                                                        </td>
+                                                        <td class="bg-light fw-bold">訪視地點</td>
+                                                        <td>
+                                                            <input type="text" class="form-control form-control-sm" placeholder="地點">
+                                                        </td>
+                                                        <td class="bg-light fw-bold">訪問人員</td>
+                                                        <td>
+                                                            <input type="text" class="form-control form-control-sm" placeholder="人員">
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        <!-- 投資相關事項調查表 -->
+                                        <h6 class="mb-3 text-dark">投資相關事項調查表</h6>
+                                        <div class="table-responsive mb-4">
+                                            <table class="table table-bordered table-sm">
+                                                <tbody>
+                                                    <tr>
+                                                        <td class="bg-light fw-bold" style="width: 50%;">本案業者設立或營業者？（創新育成機構）</td>
+                                                        <td style="width: 8%;" class="text-center">
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" type="radio" name="establish1" value="是">
+                                                                <label class="form-check-label">是</label>
+                                                            </div>
+                                                        </td>
+                                                        <td style="width: 8%;" class="text-center">
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" type="radio" name="establish1" value="否" checked>
+                                                                <label class="form-check-label">否</label>
+                                                            </div>
+                                                        </td>
+                                                        <td style="width: 34%;">
+                                                            <input type="text" class="form-control form-control-sm" placeholder="月份：">
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="bg-light fw-bold">本案業者財務報表是否有會計師簽證？（創新育成機構）</td>
+                                                        <td class="text-center">
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" type="radio" name="establish2" value="是">
+                                                                <label class="form-check-label">是</label>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" type="radio" name="establish2" value="否" checked>
+                                                                <label class="form-check-label">否</label>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" class="form-control form-control-sm" placeholder="月份：">
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="bg-light fw-bold">本機構是否曾參與投資本案業者家源投資？</td>
+                                                        <td class="text-center">
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" type="radio" name="establish3" value="是">
+                                                                <label class="form-check-label">是</label>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" type="radio" name="establish3" value="否" checked>
+                                                                <label class="form-check-label">否</label>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" class="form-control form-control-sm" placeholder="金額、時期，___%，原因：">
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="bg-light fw-bold">本機構是否享有業者經營決策權及監督運作？</td>
+                                                        <td class="text-center">
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" type="radio" name="establish4" value="是" checked>
+                                                                <label class="form-check-label">是</label>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" type="radio" name="establish4" value="否">
+                                                                <label class="form-check-label">否</label>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" class="form-control form-control-sm" placeholder="金額、時期，___%，原因：">
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="bg-light fw-bold">經營業者是否配置決策者輔導投標案，異構於清廉監督決策？</td>
+                                                        <td class="text-center">
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" type="radio" name="establish5" value="是" checked>
+                                                                <label class="form-check-label">是</label>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" type="radio" name="establish5" value="否">
+                                                                <label class="form-check-label">否</label>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" class="form-control form-control-sm" placeholder="金額、時期，___%，原因：">
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="bg-light fw-bold">本創業者業績依來策設機制投資會計決算多樣化？</td>
+                                                        <td class="text-center">
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" type="radio" name="establish6" value="是">
+                                                                <label class="form-check-label">是</label>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" type="radio" name="establish6" value="否" checked>
+                                                                <label class="form-check-label">否</label>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" class="form-control form-control-sm" placeholder="月份：">
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="bg-light fw-bold">異地機構業者是？</td>
+                                                        <td class="text-center">
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" type="radio" name="establish7" value="是">
+                                                                <label class="form-check-label">是</label>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" type="radio" name="establish7" value="否" checked>
+                                                                <label class="form-check-label">否</label>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" class="form-control form-control-sm" placeholder="月份：">
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        <!-- 投資進度分析 -->
+                                        <h6 class="mb-3 text-dark">二、投資進度分析</h6>
+                                        <div class="row g-3 investment-progress">
+                                            <div class="col-12">
+                                                <div class="d-flex align-items-center">
+                                                    <label class="form-label mb-0 me-2">1. 本會查案受助成的時間</label>
+                                                    <input type="number" class="form-control form-control-sm" id="assistanceTime" style="width: 80px;" min="0" max="99" placeholder="年">
+                                                    <label class="form-label mb-0 ms-2">年。</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="d-flex align-items-center">
+                                                    <label class="form-label mb-0 me-2">2. 本會案業主要投資時間</label>
+                                                    <input type="number" class="form-control form-control-sm" id="mainInvestmentTime" style="width: 80px;" min="0" max="99" placeholder="年">
+                                                    <label class="form-label mb-0 ms-2">年。</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="d-flex align-items-center">
+                                                    <label class="form-label mb-0 me-2">3. 本會查案業者落實在時業報</label>
+                                                    <input type="number" class="form-control form-control-sm" id="implementationTime" style="width: 80px;" min="0" max="99" placeholder="年">
+                                                    <label class="form-label mb-0 ms-2">年。</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="d-flex align-items-center">
+                                                    <label class="form-label mb-0 me-2">4. 本會查案業投落實在時業報</label>
+                                                    <input type="number" class="form-control form-control-sm" id="investmentReportTime" style="width: 80px;" min="0" max="99" placeholder="年">
+                                                    <label class="form-label mb-0 ms-2">年。</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 按鈕區域 -->
+						<div class="col-12">
+							<div class="d-flex gap-2 justify-content-end">
+								<a href="index.html#equity-type" class="btn btn-outline-secondary">
+									<i class="bi bi-arrow-left me-1"></i>返回股權列表
+								</a>
+								<button type="reset" class="btn btn-outline-secondary">
+									<i class="bi bi-arrow-clockwise me-1"></i>重置
+								</button>
+								<button type="submit" class="btn btn-primary">
+									<i class="bi bi-check-lg me-1"></i>提交
+								</button>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+	<script>
+		// 從 URL 參數載入資料
+		function loadEquityData() {
+			const urlParams = new URLSearchParams(window.location.search);
+			const equityId = urlParams.get('id');
+			const mode = urlParams.get('mode');
+
+			if (equityId) {
+				// 根據 ID 載入對應的股權案件資料
+				if (equityId === '1') {
+					document.getElementById('caseName').value = '科技新創A';
+					document.getElementById('caseType').value = '股權型';
+					document.getElementById('projectTeam').value = '台灣';
+					document.getElementById('contact').value = '王總監';
+					document.getElementById('contactMethod').value = 'wang@example.com';
+					document.getElementById('investmentLevel').value = 'A級';
+					document.getElementById('investAmount').value = '5,000,000';
+					document.getElementById('investManager').value = '王總監';
+					document.getElementById('postInvestManager').value = '陳經理';
+					document.getElementById('equityRatio').value = '25%';
+					document.getElementById('boardSeats').value = '2';
+					document.getElementById('fundUsage').value = '用於技術研發與市場拓展';
+					document.getElementById('investmentStage').value = 'B輪';
+					document.getElementById('valuation').value = '20,000,000';
+					document.getElementById('exitStrategy').value = 'IPO';
+					document.getElementById('assistanceTime').value = '4';
+					document.getElementById('mainInvestmentTime').value = '3';
+					document.getElementById('implementationTime').value = '2';
+					document.getElementById('investmentReportTime').value = '2';
+				} else if (equityId === '2') {
+					document.getElementById('caseName').value = '生技醫療B';
+					document.getElementById('caseType').value = '股權型';
+					document.getElementById('projectTeam').value = '美國';
+					document.getElementById('contact').value = '陳經理';
+					document.getElementById('contactMethod').value = 'chen@example.com';
+					document.getElementById('investmentLevel').value = 'B級';
+					document.getElementById('investAmount').value = '8,000,000';
+					document.getElementById('investManager').value = '陳經理';
+					document.getElementById('postInvestManager').value = '林專員';
+					document.getElementById('equityRatio').value = '30%';
+					document.getElementById('boardSeats').value = '1';
+					document.getElementById('fundUsage').value = '用於臨床試驗與藥物開發';
+					document.getElementById('investmentStage').value = 'A輪';
+					document.getElementById('valuation').value = '26,666,667';
+					document.getElementById('exitStrategy').value = '併購';
+					document.getElementById('assistanceTime').value = '6';
+					document.getElementById('mainInvestmentTime').value = '4';
+					document.getElementById('implementationTime').value = '3';
+					document.getElementById('investmentReportTime').value = '3';
+				}
+
+				// 如果是檢視模式，設為唯讀
+				if (mode !== 'edit') {
+					const inputs = document.querySelectorAll('input, select, textarea');
+					inputs.forEach(input => input.disabled = true);
+					document.querySelector('button[type="submit"]').style.display = 'none';
+					document.querySelector('button[type="reset"]').style.display = 'none';
+				}
+			}
+		}
+
+		// 存檔功能
+		function saveForm() {
+			alert('資料已儲存！');
+		}
+
+		// 表單提交
+		document.getElementById('equityForm').addEventListener('submit', function(e) {
+			e.preventDefault();
+			alert('表單已提交！即將跳轉到股權型列表頁面');
+			window.location.href = 'index.html#equity-type';
+		});
+
+		// 處理展開/收合圖示動畫
+		document.addEventListener('DOMContentLoaded', function() {
+			loadEquityData();
+			
+			// 監聽公司基本資料的展開/收合事件
+			const companyCollapse = document.getElementById('companyDataCollapse');
+			const toggleIcon = document.getElementById('companyToggleIcon');
+			
+			companyCollapse.addEventListener('show.bs.collapse', function() {
+				toggleIcon.className = 'bi bi-chevron-up';
+			});
+			
+			companyCollapse.addEventListener('hide.bs.collapse', function() {
+				toggleIcon.className = 'bi bi-chevron-down';
+			});
+
+			// 監聽股權投資詳細資訊的展開/收合事件
+			const equityDetailsCollapse = document.getElementById('equityDetailsCollapse');
+			const equityDetailsToggleIcon = document.getElementById('equityDetailsToggleIcon');
+			
+			equityDetailsCollapse.addEventListener('show.bs.collapse', function() {
+				equityDetailsToggleIcon.className = 'bi bi-chevron-up';
+			});
+			
+			equityDetailsCollapse.addEventListener('hide.bs.collapse', function() {
+				equityDetailsToggleIcon.className = 'bi bi-chevron-down';
+			});
+
+			// 監聽檔案審核回覆的展開/收合事件
+			const fileReviewCollapse = document.getElementById('fileReviewCollapse');
+			const fileReviewToggleIcon = document.getElementById('fileReviewToggleIcon');
+			
+			fileReviewCollapse.addEventListener('show.bs.collapse', function() {
+				fileReviewToggleIcon.className = 'bi bi-chevron-up';
+			});
+			
+			fileReviewCollapse.addEventListener('hide.bs.collapse', function() {
+				fileReviewToggleIcon.className = 'bi bi-chevron-down';
+			});
+
+			// 監聽損益分析的展開/收合事件
+			const profitAnalysisCollapse = document.getElementById('profitAnalysisCollapse');
+			const profitAnalysisToggleIcon = document.getElementById('profitAnalysisToggleIcon');
+			
+			profitAnalysisCollapse.addEventListener('show.bs.collapse', function() {
+				profitAnalysisToggleIcon.className = 'bi bi-chevron-up';
+			});
+			
+			profitAnalysisCollapse.addEventListener('hide.bs.collapse', function() {
+				profitAnalysisToggleIcon.className = 'bi bi-chevron-down';
+			});
+
+			// 監聽參與投資情形及訪視的展開/收合事件
+			const investmentVisitCollapse = document.getElementById('investmentVisitCollapse');
+			const investmentVisitToggleIcon = document.getElementById('investmentVisitToggleIcon');
+			
+			investmentVisitCollapse.addEventListener('show.bs.collapse', function() {
+				investmentVisitToggleIcon.className = 'bi bi-chevron-up';
+			});
+			
+			investmentVisitCollapse.addEventListener('hide.bs.collapse', function() {
+				investmentVisitToggleIcon.className = 'bi bi-chevron-down';
+			});
+		});
+
+		// 新增檔案行功能
+		let fileRowCounter = 6; // 因為已經有5行，從6開始
+		
+		function addNewFileRow() {
+			const tableBody = document.getElementById('fileReviewTableBody');
+			const newRowId = 'fileRow' + fileRowCounter;
+			
+			const newRow = document.createElement('tr');
+			newRow.id = newRowId;
+			newRow.innerHTML = `
+				<td>
+					<input type="text" class="form-control form-control-sm" placeholder="請輸入工作項目">
+				</td>
+				<td>
+					<input type="date" class="form-control form-control-sm">
+				</td>
+				<td>
+					<input type="text" class="form-control form-control-sm" placeholder="請輸入文件內容">
+				</td>
+				<td>
+					<input type="datetime-local" class="form-control form-control-sm">
+				</td>
+				<td>
+					<div class="d-flex align-items-center">
+						<i class="bi bi-file-text text-secondary me-2"></i>
+						<input type="text" class="form-control form-control-sm" placeholder="檔案名稱">
+					</div>
+				</td>
+				<td>
+					<textarea class="form-control form-control-sm" rows="2" placeholder="請輸入回覆內容..."></textarea>
+				</td>
+				<td>
+					<select class="form-select form-select-sm">
+						<option value="通過">通過</option>
+						<option value="退回">退回</option>
+						<option value="待審" selected>待審</option>
+					</select>
+				</td>
+				<td>
+					<button type="button" class="btn btn-outline-danger btn-sm" onclick="removeFileRow('${newRowId}')">
+						<i class="bi bi-trash"></i>
+					</button>
+				</td>
+			`;
+			
+			tableBody.appendChild(newRow);
+			fileRowCounter++;
+		}
+
+		// 刪除檔案行功能
+		function removeFileRow(rowId) {
+			const row = document.getElementById(rowId);
+			if (row) {
+				if (confirm('確定要刪除這筆檔案記錄嗎？')) {
+					row.remove();
+				}
+			}
+		}
+
+		// 損益分析功能
+		let profitRowCounter = 7; // 因為已經有6行，從7開始
+		
+		function addNewProfitRow() {
+			const tableBody = document.getElementById('profitAnalysisTableBody');
+			const newRowId = 'profitRow' + profitRowCounter;
+			
+			const newRow = document.createElement('tr');
+			newRow.id = newRowId;
+			newRow.innerHTML = `
+				<td>
+					<input type="text" class="form-control form-control-sm" placeholder="請輸入項目名稱">
+				</td>
+				<td>
+					<select class="form-select form-select-sm">
+						<option value="千元" selected>千元</option>
+						<option value="萬元">萬元</option>
+						<option value="百萬元">百萬元</option>
+						<option value="%">%</option>
+					</select>
+				</td>
+				<td>
+					<input type="number" class="form-control form-control-sm" value="0" placeholder="0" onchange="calculateProfitPercentages('${newRowId}')">
+				</td>
+				<td>
+					<input type="number" class="form-control form-control-sm" value="0" placeholder="0" onchange="calculateProfitPercentages('${newRowId}')">
+				</td>
+				<td>
+					<span class="text-muted">0.0%</span>
+				</td>
+				<td>
+					<input type="number" class="form-control form-control-sm" value="0" placeholder="0" onchange="calculateProfitPercentages('${newRowId}')">
+				</td>
+				<td>
+					<span class="text-muted">0.0%</span>
+				</td>
+				<td>
+					<span class="text-muted">0.0%</span>
+				</td>
+				<td>
+					<span class="text-muted">0.0%</span>
+				</td>
+				<td>
+					<button type="button" class="btn btn-outline-danger btn-sm" onclick="removeProfitRow('${newRowId}')">
+						<i class="bi bi-x"></i>
+					</button>
+				</td>
+			`;
+			
+			tableBody.appendChild(newRow);
+			profitRowCounter++;
+		}
+
+		// 刪除損益分析行功能
+		function removeProfitRow(rowId) {
+			const row = document.getElementById(rowId);
+			if (row) {
+				if (confirm('確定要刪除這筆損益項目嗎？')) {
+					row.remove();
+				}
+			}
+		}
+
+		// 計算百分比功能（簡化版）
+		function calculateProfitPercentages(rowId) {
+			const row = document.getElementById(rowId);
+			if (!row) return;
+			
+			const currentValue = parseFloat(row.children[2].querySelector('input').value) || 0;
+			const lastYearValue = parseFloat(row.children[3].querySelector('input').value) || 0;
+			const estimatedValue = parseFloat(row.children[5].querySelector('input').value) || 0;
+			
+			// 計算成長率 (本期實際 vs 去年同期)
+			let growthRate = 0;
+			if (lastYearValue !== 0) {
+				growthRate = ((currentValue - lastYearValue) / lastYearValue * 100);
+			}
+			
+			// 計算達成率 (本期實際 vs 本期預估)
+			let achievementRate = 0;
+			if (estimatedValue !== 0) {
+				achievementRate = (currentValue / estimatedValue * 100);
+			}
+			
+			// 更新顯示
+			const growthSpan = row.children[4].querySelector('span');
+			const achievementSpan1 = row.children[6].querySelector('span');
+			const achievementSpan2 = row.children[8].querySelector('span');
+			
+			if (growthRate > 0) {
+				growthSpan.className = 'text-success fw-bold';
+				growthSpan.textContent = '+' + growthRate.toFixed(1) + '%';
+			} else if (growthRate < 0) {
+				growthSpan.className = 'text-danger fw-bold';
+				growthSpan.textContent = growthRate.toFixed(1) + '%';
+			} else {
+				growthSpan.className = 'text-muted';
+				growthSpan.textContent = '0.0%';
+			}
+			
+			if (achievementRate >= 100) {
+				achievementSpan1.className = 'text-success fw-bold';
+				achievementSpan2.className = 'text-success fw-bold';
+			} else if (achievementRate >= 90) {
+				achievementSpan1.className = 'text-warning fw-bold';
+				achievementSpan2.className = 'text-warning fw-bold';
+			} else {
+				achievementSpan1.className = 'text-danger fw-bold';
+				achievementSpan2.className = 'text-danger fw-bold';
+			}
+			
+			achievementSpan1.textContent = achievementRate.toFixed(1) + '%';
+			achievementSpan2.textContent = achievementRate.toFixed(1) + '%';
+			
+			// 複製成長率到第7欄
+			row.children[7].querySelector('span').className = growthSpan.className;
+			row.children[7].querySelector('span').textContent = growthSpan.textContent;
+		}
+	</script>
+</body>
+</html>

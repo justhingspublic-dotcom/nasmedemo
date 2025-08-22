@@ -1,0 +1,643 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>專案管理系統</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;600&display=swap" rel="stylesheet">
+	<style>
+		:root { 
+			--bs-body-font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text","SF Pro Display","Noto Sans TC","Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang TC", "Microsoft JhengHei", sans-serif; 
+		}
+		body {
+			margin: 0;
+			padding: 0;
+		}
+		.layout-container {
+			display: flex;
+			min-height: 100vh;
+		}
+		.sidebar {
+			width: 280px;
+			background-color: #ffffff;
+			border-right: 1px solid #dee2e6;
+			overflow-y: auto;
+			flex-shrink: 0;
+		}
+		.main-content {
+			flex: 1;
+			min-height: 100vh;
+			overflow-x: auto;
+		}
+		.nav-link {
+			color: #495057;
+			border-radius: 0.375rem;
+			margin-bottom: 2px;
+			text-decoration: none;
+		}
+		.nav-link:hover {
+			background-color: #f8f9fa;
+			color: #212529;
+		}
+		.nav-link.active {
+			background-color: #e9ecef;
+			color: #212529;
+			font-weight: 600;
+		}
+		.nav-link.sub-item {
+			padding-left: 2rem;
+			font-size: 0.9rem;
+		}
+		.collapse-icon {
+			transition: transform 0.2s;
+		}
+		.collapsed .collapse-icon {
+			transform: rotate(-90deg);
+		}
+		@media (max-width: 768px) {
+			.layout-container {
+				flex-direction: column;
+			}
+			.sidebar {
+				width: 100%;
+				height: auto;
+				position: relative;
+			}
+			.main-content {
+				padding-top: 0;
+			}
+			.mobile-toggle {
+				display: block !important;
+			}
+			.sidebar.d-md-block {
+				display: none !important;
+			}
+		}
+		.mobile-toggle {
+			display: none;
+		}
+	</style>
+</head>
+<body class="bg-light">
+	<div class="layout-container">
+		<!-- Sidebar -->
+		<div class="sidebar d-md-block" id="sidebar">
+			<div class="p-3 border-bottom">
+				<h5 class="mb-0">專案管理系統</h5>
+			</div>
+			<nav class="nav flex-column p-3">
+				<!-- 1. 專案列表 -->
+				<a class="nav-link d-flex align-items-center" data-bs-toggle="collapse" href="#projectList" role="button">
+					<i class="bi bi-folder me-2"></i>
+					<span class="flex-grow-1">專案列表</span>
+					<i class="bi bi-chevron-down collapse-icon"></i>
+				</a>
+				<div class="collapse show" id="projectList">
+					<a class="nav-link sub-item" href="javascript:void(0);" onclick="testShowProjectType(); return false;">
+						<i class="bi bi-diagram-3 me-2"></i>專案型
+					</a>
+					<a class="nav-link sub-item" href="#" onclick="showPage('equity-type')">
+						<i class="bi bi-pie-chart me-2"></i>股權型
+					</a>
+				</div>
+
+				<!-- 2. PM管理 -->
+				<a class="nav-link d-flex align-items-center" data-bs-toggle="collapse" href="#pmManagement" role="button">
+					<i class="bi bi-person-gear me-2"></i>
+					<span class="flex-grow-1">PM管理</span>
+					<i class="bi bi-chevron-down collapse-icon"></i>
+				</a>
+				<div class="collapse" id="pmManagement">
+					<a class="nav-link sub-item" href="#" onclick="showPage('work-log')">
+						<i class="bi bi-journal-text me-2"></i>工作日誌
+					</a>
+					<a class="nav-link sub-item" href="#" onclick="showPage('monthly-todo')">
+						<i class="bi bi-calendar-check me-2"></i>本月待辦事項
+					</a>
+				</div>
+
+				<!-- 3. 統計介面 -->
+				<a class="nav-link d-flex align-items-center" data-bs-toggle="collapse" href="#statistics" role="button">
+					<i class="bi bi-graph-up me-2"></i>
+					<span class="flex-grow-1">統計介面</span>
+					<i class="bi bi-chevron-down collapse-icon"></i>
+				</a>
+				<div class="collapse" id="statistics">
+					<a class="nav-link sub-item" href="#" onclick="showPage('visit-stats')">
+						<i class="bi bi-geo-alt me-2"></i>訪視統計
+					</a>
+					<a class="nav-link sub-item" href="#" onclick="showPage('profit-stats')">
+						<i class="bi bi-currency-dollar me-2"></i>分潤統計
+					</a>
+					<a class="nav-link sub-item" href="#" onclick="showPage('progress-stats')">
+						<i class="bi bi-bar-chart me-2"></i>進度統計
+					</a>
+					<a class="nav-link sub-item" href="#" onclick="showPage('project-overview-status')">
+						<i class="bi bi-table me-2"></i>專案概況表狀態
+					</a>
+				</div>
+
+				<!-- 4. 共編資料 -->
+				<a class="nav-link d-flex align-items-center" data-bs-toggle="collapse" href="#sharedData" role="button">
+					<i class="bi bi-share me-2"></i>
+					<span class="flex-grow-1">共編資料</span>
+					<i class="bi bi-chevron-down collapse-icon"></i>
+				</a>
+				<div class="collapse" id="sharedData">
+					<a class="nav-link sub-item" href="#" onclick="showPage('shared-equity')">
+						<i class="bi bi-pie-chart me-2"></i>股權型
+					</a>
+					<a class="nav-link sub-item" href="#" onclick="showPage('shared-project')">
+						<i class="bi bi-diagram-3 me-2"></i>專案型
+					</a>
+					<a class="nav-link sub-item" href="#" onclick="showPage('visit-data-1')">
+						<i class="bi bi-clipboard-data me-2"></i>訪視資料一
+					</a>
+					<a class="nav-link sub-item" href="#" onclick="showPage('visit-data-2')">
+						<i class="bi bi-clipboard-data me-2"></i>訪視資料二
+					</a>
+					<a class="nav-link sub-item" href="#" onclick="showPage('meeting-notice')">
+						<i class="bi bi-calendar-event me-2"></i>會議通知
+					</a>
+				</div>
+			</nav>
+		</div>
+	</div>
+
+	<!-- Main Content -->
+	<div class="main-content">
+		<div class="container-fluid p-4">
+			<!-- 預設首頁 -->
+			<div id="home-page" class="content-page">
+				<div class="row">
+					<div class="col-12">
+						<h2 class="mb-4">歡迎使用專案管理系統</h2>
+						<div class="card">
+							<div class="card-body">
+								<p class="card-text">請從左側選單選擇功能模組。</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- 專案型頁面 -->
+			<div id="project-type-page" class="content-page" style="display: none;">
+				<div class="d-flex justify-content-between align-items-center mb-4">
+					<h2>專案型</h2>
+					<a href="project-overview.html" class="btn btn-outline-secondary">
+						<i class="bi bi-plus-circle me-1"></i>新增案件概況
+					</a>
+				</div>
+				<div class="card">
+					<div class="card-body">
+						<div class="table-responsive">
+							<table class="table table-hover">
+								<thead class="table-light">
+									<tr>
+										<th>案件名稱</th>
+										<th>案件類型</th>
+										<th>專案國隊</th>
+										<th>負責人</th>
+										<th>投資金額</th>
+										<th>狀態</th>
+										<th>操作</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td>範例專案A</td>
+										<td>專案型</td>
+										<td>台灣</td>
+										<td>張經理</td>
+										<td>1,000,000</td>
+										<td><span class="badge bg-secondary">進行中</span></td>
+										<td>
+											<a href="project-overview.html?id=1" class="btn btn-sm btn-outline-secondary">
+												<i class="bi bi-eye me-1"></i>檢視
+											</a>
+											<a href="project-overview.html?id=1&mode=edit" class="btn btn-sm btn-outline-secondary">
+												<i class="bi bi-pencil me-1"></i>編輯
+											</a>
+										</td>
+									</tr>
+									<tr>
+										<td>範例專案B</td>
+										<td>專案型</td>
+										<td>中國</td>
+										<td>李專員</td>
+										<td>2,500,000</td>
+										<td><span class="badge bg-dark">已完成</span></td>
+										<td>
+											<a href="project-overview.html?id=2" class="btn btn-sm btn-outline-secondary">
+												<i class="bi bi-eye me-1"></i>檢視
+											</a>
+											<a href="project-overview.html?id=2&mode=edit" class="btn btn-sm btn-outline-secondary">
+												<i class="bi bi-pencil me-1"></i>編輯
+											</a>
+										</td>
+									</tr>
+									<tr>
+										<td colspan="7" class="text-center">
+											<a href="project-overview.html" class="btn btn-outline-secondary">
+												<i class="bi bi-plus-circle me-1"></i>新增更多專案
+											</a>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+
+			<!-- 股權型頁面 -->
+			<div id="equity-type-page" class="content-page" style="display: none;">
+				<div class="d-flex justify-content-between align-items-center mb-4">
+					<h2>股權型</h2>
+					<button class="btn btn-outline-secondary">
+						<i class="bi bi-plus-circle me-1"></i>新增股權項目
+					</button>
+				</div>
+				<div class="card">
+					<div class="card-body">
+						<div class="table-responsive">
+							<table class="table table-hover">
+								<thead class="table-light">
+									<tr>
+										<th>公司名稱</th>
+										<th>持股比例</th>
+										<th>投資金額</th>
+										<th>估值</th>
+										<th>投資日期</th>
+										<th>操作</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td colspan="6" class="text-center text-muted">暫無資料</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- 工作日誌頁面 -->
+			<div id="work-log-page" class="content-page" style="display: none;">
+				<div class="d-flex justify-content-between align-items-center mb-4">
+					<h2>工作日誌</h2>
+					<button class="btn btn-outline-secondary">
+						<i class="bi bi-plus-circle me-1"></i>新增日誌
+					</button>
+				</div>
+				<div class="row g-3">
+					<div class="col-12">
+						<div class="card">
+							<div class="card-body">
+								<h6 class="card-title">今日工作</h6>
+								<p class="text-muted">尚未新增今日工作記錄</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- 本月待辦事項頁面 -->
+			<div id="monthly-todo-page" class="content-page" style="display: none;">
+				<div class="d-flex justify-content-between align-items-center mb-4">
+					<h2>本月待辦事項</h2>
+					<button class="btn btn-outline-secondary">
+						<i class="bi bi-plus-circle me-1"></i>新增待辦
+					</button>
+				</div>
+				<div class="row g-3">
+					<div class="col-md-4">
+						<div class="card border-secondary">
+							<div class="card-header bg-light text-dark">
+								<h6 class="mb-0">待處理</h6>
+							</div>
+							<div class="card-body">
+								<p class="text-muted">暫無待處理事項</p>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="card border-secondary">
+							<div class="card-header bg-secondary text-white">
+								<h6 class="mb-0">進行中</h6>
+							</div>
+							<div class="card-body">
+								<p class="text-muted">暫無進行中事項</p>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="card border-secondary">
+							<div class="card-header bg-dark text-white">
+								<h6 class="mb-0">已完成</h6>
+							</div>
+							<div class="card-body">
+								<p class="text-muted">暫無已完成事項</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- 訪視統計頁面 -->
+			<div id="visit-stats-page" class="content-page" style="display: none;">
+				<h2 class="mb-4">訪視統計</h2>
+				<div class="row g-3 mb-4">
+					<div class="col-md-3">
+						<div class="card text-center">
+							<div class="card-body">
+								<h5 class="card-title">本月訪視</h5>
+								<h3 class="text-dark">0</h3>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="card text-center">
+							<div class="card-body">
+								<h5 class="card-title">已完成</h5>
+								<h3 class="text-dark">0</h3>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="card text-center">
+							<div class="card-body">
+								<h5 class="card-title">待執行</h5>
+								<h3 class="text-secondary">0</h3>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="card text-center">
+							<div class="card-body">
+								<h5 class="card-title">逾期</h5>
+								<h3 class="text-muted">0</h3>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="card">
+					<div class="card-body">
+						<div class="bg-light border rounded d-flex align-items-center justify-content-center" style="height:300px;">
+							圖表區域
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- 分潤統計頁面 -->
+			<div id="profit-stats-page" class="content-page" style="display: none;">
+				<h2 class="mb-4">分潤統計</h2>
+				<div class="card">
+					<div class="card-body">
+						<div class="table-responsive">
+							<table class="table table-hover">
+								<thead class="table-light">
+									<tr>
+										<th>專案</th>
+										<th>總投資</th>
+										<th>分潤比例</th>
+										<th>已分潤</th>
+										<th>待分潤</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td colspan="5" class="text-center text-muted">暫無資料</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- 進度統計頁面 -->
+			<div id="progress-stats-page" class="content-page" style="display: none;">
+				<h2 class="mb-4">進度統計</h2>
+				<div class="card">
+					<div class="card-body">
+						<div class="bg-light border rounded d-flex align-items-center justify-content-center" style="height:400px;">
+							進度圖表區域
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- 專案概況表狀態頁面 -->
+			<div id="project-overview-status-page" class="content-page" style="display: none;">
+				<h2 class="mb-4">專案概況表狀態</h2>
+				<div class="card">
+					<div class="card-body">
+						<div class="table-responsive">
+							<table class="table table-hover">
+								<thead class="table-light">
+									<tr>
+										<th>專案名稱</th>
+										<th>概況表狀態</th>
+										<th>最後更新</th>
+										<th>更新者</th>
+										<th>操作</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td colspan="5" class="text-center text-muted">暫無資料</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- 共編資料 - 股權型頁面 -->
+			<div id="shared-equity-page" class="content-page" style="display: none;">
+				<h2 class="mb-4">共編資料 - 股權型</h2>
+				<div class="card">
+					<div class="card-body">
+						<p>股權型共編資料內容區域</p>
+					</div>
+				</div>
+			</div>
+
+			<!-- 共編資料 - 專案型頁面 -->
+			<div id="shared-project-page" class="content-page" style="display: none;">
+				<h2 class="mb-4">共編資料 - 專案型</h2>
+				<div class="card">
+					<div class="card-body">
+						<p>專案型共編資料內容區域</p>
+					</div>
+				</div>
+			</div>
+
+			<!-- 訪視資料一頁面 -->
+			<div id="visit-data-1-page" class="content-page" style="display: none;">
+				<h2 class="mb-4">訪視資料一</h2>
+				<div class="card">
+					<div class="card-body">
+						<p>訪視資料一內容區域</p>
+					</div>
+				</div>
+			</div>
+
+			<!-- 訪視資料二頁面 -->
+			<div id="visit-data-2-page" class="content-page" style="display: none;">
+				<h2 class="mb-4">訪視資料二</h2>
+				<div class="card">
+					<div class="card-body">
+						<p>訪視資料二內容區域</p>
+					</div>
+				</div>
+			</div>
+
+			<!-- 會議通知頁面 -->
+			<div id="meeting-notice-page" class="content-page" style="display: none;">
+				<div class="d-flex justify-content-between align-items-center mb-4">
+					<h2>會議通知</h2>
+					<button class="btn btn-outline-secondary">
+						<i class="bi bi-plus-circle me-1"></i>新增會議
+					</button>
+				</div>
+				<div class="card">
+					<div class="card-body">
+						<div class="table-responsive">
+							<table class="table table-hover">
+								<thead class="table-light">
+									<tr>
+										<th>會議主題</th>
+										<th>日期時間</th>
+										<th>地點</th>
+										<th>參與者</th>
+										<th>狀態</th>
+										<th>操作</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td colspan="6" class="text-center text-muted">暫無會議通知</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	</div>
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+	<script>
+		// 簡化的測試函數
+		function testShowProjectType() {
+			console.log('測試函數被調用');
+			var pages = document.getElementsByClassName('content-page');
+			for (var i = 0; i < pages.length; i++) {
+				pages[i].style.display = 'none';
+			}
+			var targetPage = document.getElementById('project-type-page');
+			if (targetPage) {
+				targetPage.style.display = 'block';
+				console.log('專案型頁面顯示成功');
+			} else {
+				console.log('找不到專案型頁面');
+			}
+		}
+	</script>
+	<script>
+		// 頁面切換函數
+		function showPage(pageId, clickedElement = null) {
+			console.log('showPage called with:', pageId);
+			
+			// 隱藏所有頁面
+			const pages = document.querySelectorAll('.content-page');
+			pages.forEach(page => {
+				page.style.display = 'none';
+			});
+
+			// 移除所有選單項目的 active 狀態
+			const navLinks = document.querySelectorAll('.nav-link');
+			navLinks.forEach(link => {
+				link.classList.remove('active');
+			});
+
+			// 顯示指定頁面
+			const targetPage = document.getElementById(pageId + '-page');
+			console.log('Target page element:', targetPage);
+			
+			if (targetPage) {
+				targetPage.style.display = 'block';
+				console.log('Page displayed:', pageId);
+			} else {
+				console.log('Page not found, showing home');
+				// 如果頁面不存在，顯示首頁
+				document.getElementById('home-page').style.display = 'block';
+			}
+
+			// 添加當前選單項目的 active 狀態
+			if (clickedElement) {
+				clickedElement.classList.add('active');
+			}
+
+			// 在手機版本上關閉側邊欄
+			const sidebar = document.getElementById('sidebar');
+			const bsOffcanvas = bootstrap.Offcanvas.getInstance(sidebar);
+			if (bsOffcanvas) {
+				bsOffcanvas.hide();
+			}
+		}
+
+		// 折疊圖示動畫 + 選單點擊事件
+		document.addEventListener('DOMContentLoaded', function() {
+			const collapseElements = document.querySelectorAll('[data-bs-toggle="collapse"]');
+			collapseElements.forEach(element => {
+				element.addEventListener('click', function() {
+					const icon = this.querySelector('.collapse-icon');
+					if (icon) {
+						this.classList.toggle('collapsed');
+					}
+				});
+			});
+
+			// 綁定選單點擊事件
+			const menuLinks = document.querySelectorAll('[onclick*="showPage"]');
+			menuLinks.forEach(link => {
+				link.addEventListener('click', function(e) {
+					e.preventDefault();
+					const onclickAttr = this.getAttribute('onclick');
+					const pageId = onclickAttr.match(/showPage\('([^']+)'\)/)[1];
+					showPage(pageId, this);
+				});
+			});
+
+			// 處理 URL 錨點
+			function handleUrlHash() {
+				const hash = window.location.hash.substring(1); // 移除 # 符號
+				if (hash && document.getElementById(hash + '-page')) {
+					showPage(hash);
+				}
+			}
+
+			// 頁面載入時檢查錨點
+			handleUrlHash();
+
+			// 監聽錨點變化
+			window.addEventListener('hashchange', handleUrlHash);
+		});
+	</script>
+</body>
+</html>
