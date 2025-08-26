@@ -1039,9 +1039,14 @@
 				<div id="project-type-page" class="content-page">
 					<div class="d-flex justify-content-between align-items-center mb-4">
 						<h2>專案型</h2>
-						<a href="project-overview.html" class="btn btn-outline-secondary">
-							<i class="bi bi-plus-circle me-1"></i>新增案件概況
-						</a>
+						<div class="d-flex gap-2">
+							<a href="project-overview.html" class="btn btn-outline-secondary">
+								<i class="bi bi-plus-circle me-1"></i>新增案件概況
+							</a>
+							<button class="btn btn-outline-primary" onclick="exportProjectTypeData()">
+								<i class="bi bi-download me-1"></i>匯出資料
+							</button>
+						</div>
 					</div>
 					<div class="card">
 						<div class="card-body">
@@ -1119,10 +1124,15 @@
 				<!-- 股權型頁面 -->
 				<div id="equity-type-page" class="content-page">
 					<div class="d-flex justify-content-between align-items-center mb-4">
-					<h2>股權型</h2>
-						<a href="equity-overview.html" class="btn btn-outline-secondary">
-							<i class="bi bi-plus-circle me-1"></i>新增股權案件概況
-						</a>
+						<h2>股權型</h2>
+						<div class="d-flex gap-2">
+							<a href="equity-overview.html" class="btn btn-outline-secondary">
+								<i class="bi bi-plus-circle me-1"></i>新增股權案件概況
+							</a>
+							<button class="btn btn-outline-primary" onclick="exportEquityTypeData()">
+								<i class="bi bi-download me-1"></i>匯出資料
+							</button>
+						</div>
 					</div>
 					<div class="card">
 						<div class="card-body">
@@ -4832,10 +4842,14 @@
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h2>會議通知表格</h2>
                         <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                            <button type="button" class="btn btn-secondary">新增項目</button>
-                            <button type="button" class="btn btn-outline-secondary">匯出資料</button>
-				</div>
-			</div>
+                            <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#addMeetingModal">
+                                <i class="bi bi-plus-circle me-1"></i>新增會議通知
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary" onclick="exportMeetingData()">
+                                <i class="bi bi-download me-1"></i>匯出資料
+                            </button>
+                        </div>
+                    </div>
                     <div class="card">
                         <div class="card-body">
                             <div class="mb-3">
@@ -5296,9 +5310,152 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                				</div>
 
-                <div id="vendor-data-page" class="content-page">
+				<!-- 新增會議通知模態框 -->
+				<div class="modal fade" id="addMeetingModal" tabindex="-1" aria-labelledby="addMeetingModalLabel" aria-hidden="true">
+					<div class="modal-dialog modal-lg">
+						<div class="modal-content">
+							<div class="modal-header bg-primary text-white">
+								<h5 class="modal-title" id="addMeetingModalLabel">
+									<i class="bi bi-calendar-event me-2"></i>新增會議通知
+								</h5>
+								<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+							</div>
+							<div class="modal-body">
+								<form id="addMeetingForm">
+									<div class="row">
+										<div class="col-md-6">
+											<div class="mb-3">
+												<label for="meetingSubject" class="form-label">會議主旨 <span class="text-danger">*</span></label>
+												<input type="text" class="form-control" id="meetingSubject" required>
+											</div>
+										</div>
+										<div class="col-md-6">
+											<div class="mb-3">
+												<label for="meetingHost" class="form-label">主持人 <span class="text-danger">*</span></label>
+												<select class="form-select" id="meetingHost" required>
+													<option value="">請選擇主持人</option>
+													<option value="王經理">王經理</option>
+													<option value="陳總監">陳總監</option>
+													<option value="林主任">林主任</option>
+													<option value="李協理">李協理</option>
+													<option value="張經理">張經理</option>
+												</select>
+											</div>
+										</div>
+									</div>
+									
+									<div class="row">
+										<div class="col-md-6">
+											<div class="mb-3">
+												<label for="meetingDate" class="form-label">會議日期 <span class="text-danger">*</span></label>
+												<input type="date" class="form-control" id="meetingDate" required>
+											</div>
+										</div>
+										<div class="col-md-6">
+											<div class="mb-3">
+												<label for="meetingTime" class="form-label">會議時間 <span class="text-danger">*</span></label>
+												<input type="time" class="form-control" id="meetingTime" required>
+											</div>
+										</div>
+									</div>
+									
+									<div class="mb-3">
+										<label for="meetingLocation" class="form-label">會議地點</label>
+										<input type="text" class="form-control" id="meetingLocation" placeholder="例：會議室A、線上會議">
+									</div>
+									
+									<div class="mb-3">
+										<label for="meetingAttendees" class="form-label">與會人員 <span class="text-danger">*</span></label>
+										<select class="form-select" id="meetingAttendees" multiple required>
+											<option value="張志明">張志明</option>
+											<option value="李雅婷">李雅婷</option>
+											<option value="王大明">王大明</option>
+											<option value="陳美玲">陳美玲</option>
+											<option value="林志豪">林志豪</option>
+											<option value="黃淑芬">黃淑芬</option>
+											<option value="蔡雅雯">蔡雅雯</option>
+											<option value="劉佳靜">劉佳靜</option>
+										</select>
+										<small class="form-text text-muted">按住 Ctrl 鍵可選擇多個與會人員</small>
+									</div>
+									
+									<div class="mb-3">
+										<label for="meetingTags" class="form-label">標籤</label>
+										<select class="form-select" id="meetingTags" multiple>
+											<option value="重要">重要</option>
+											<option value="緊急">緊急</option>
+											<option value="季度會議">季度會議</option>
+											<option value="開發">開發</option>
+											<option value="客戶">客戶</option>
+											<option value="內部">內部</option>
+											<option value="策略">策略</option>
+											<option value="規劃">規劃</option>
+										</select>
+										<small class="form-text text-muted">按住 Ctrl 鍵可選擇多個標籤</small>
+									</div>
+									
+									<div class="mb-3">
+										<label for="meetingContent" class="form-label">會議內容 <span class="text-danger">*</span></label>
+										<textarea class="form-control" id="meetingContent" rows="4" placeholder="請詳細描述會議內容、議程、討論事項等..." required></textarea>
+									</div>
+									
+									<div class="mb-3">
+										<label for="meetingRemark" class="form-label">備註</label>
+										<textarea class="form-control" id="meetingRemark" rows="2" placeholder="其他注意事項或特殊要求"></textarea>
+									</div>
+									
+									<div class="row">
+										<div class="col-md-6">
+											<div class="mb-3">
+												<label for="meetingPriority" class="form-label">優先級</label>
+												<select class="form-select" id="meetingPriority">
+													<option value="一般">一般</option>
+													<option value="重要">重要</option>
+													<option value="緊急">緊急</option>
+												</select>
+											</div>
+										</div>
+										<div class="col-md-6">
+											<div class="mb-3">
+												<label for="meetingStatus" class="form-label">狀態</label>
+												<select class="form-select" id="meetingStatus">
+													<option value="待發送">待發送</option>
+													<option value="已發送">已發送</option>
+													<option value="已確認">已確認</option>
+													<option value="已取消">已取消</option>
+												</select>
+											</div>
+										</div>
+									</div>
+									
+									<div class="mb-3 form-check">
+										<input type="checkbox" class="form-check-input" id="sendEmailNotification" checked>
+										<label class="form-check-label" for="sendEmailNotification">
+											建立後立即發送郵件通知
+										</label>
+									</div>
+									
+									<div class="mb-3 form-check">
+										<input type="checkbox" class="form-check-input" id="createTasksFromMeeting">
+										<label class="form-check-label" for="createTasksFromMeeting">
+											自動生成相關任務
+										</label>
+									</div>
+								</form>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+								<button type="button" class="btn btn-primary" onclick="saveMeetingNotification()">
+									<i class="bi bi-save me-1"></i>儲存會議通知
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div id="vendor-data-page" class="content-page">
                     <h2>業者資料</h2>
                     <p>此處為業者資料的內容。</p>
                 </div>
@@ -5630,55 +5787,131 @@
 
 				<div id="dunning-document-setting-page" class="content-page">
                     <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h2>催繳時間設定</h2>
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addDunningSettingModal">新增催繳設定</button>
+                        <h2>催繳機制管理</h2>
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addDunningSettingModal">
+                                <i class="bi bi-plus-circle me-1"></i>新增催繳設定
+                            </button>
+                            <button type="button" class="btn btn-outline-info" onclick="viewDunningHistory()">
+                                <i class="bi bi-clock-history me-1"></i>催繳紀錄
+                            </button>
+                            <button type="button" class="btn btn-outline-success" onclick="generateDunningReport()">
+                                <i class="bi bi-file-earmark-text me-1"></i>評核報表
+                            </button>
+                        </div>
                     </div>
-                    <div class="alert alert-success" role="alert">
-                        目前時間：2025/08/04 下午02:43:15
+                    
+                    <!-- 系統狀態概覽 -->
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <div class="card text-center bg-warning text-white">
+                                <div class="card-body">
+                                    <h5 class="card-title">待催繳案件</h5>
+                                    <p class="card-text fs-2">12</p>
+                                    <p class="card-text">逾期未繳交</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-center bg-info text-white">
+                                <div class="card-body">
+                                    <h5 class="card-title">第一次提醒</h5>
+                                    <p class="card-text fs-2">8</p>
+                                    <p class="card-text">已發送提醒</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-center bg-danger text-white">
+                                <div class="card-body">
+                                    <h5 class="card-title">第二次提醒</h5>
+                                    <p class="card-text fs-2">3</p>
+                                    <p class="card-text">嚴重逾期</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-center bg-success text-white">
+                                <div class="card-body">
+                                    <h5 class="card-title">已改善案件</h5>
+                                    <p class="card-text fs-2">15</p>
+                                    <p class="card-text">本年度</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+
+                    <!-- 催繳設定表格 -->
                     <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">催繳階段設定</h5>
+                        </div>
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table class="table table-hover table-bordered">
                                     <thead class="table-light">
                                         <tr>
-                                            <th>年度日期</th>
-                                            <th>提醒日期</th>
-                                            <th>第一次提醒間隔天數</th>
-                                            <th>第二次提醒間隔天數</th>
-                                            <th>第三次提醒額外天數</th>
+                                            <th>文件類型</th>
+                                            <th>繳交期限</th>
+                                            <th>第一次提醒</th>
+                                            <th>第二次提醒</th>
+                                            <th>第三次提醒</th>
                                             <th>催繳公函</th>
+                                            <th>評核標準</th>
+                                            <th>狀態</th>
                                             <th>操作</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td>2024/12/31 (週二)</td>
+                                            <td>季度財報</td>
+                                            <td>每季結束後30天</td>
+                                            <td>逾期3個工作日</td>
+                                            <td>逾期7個工作日</td>
+                                            <td>逾期10個工作日</td>
+                                            <td>逾期15個工作日</td>
                                             <td>
-                                                <p>第一次：2025/01/03 (週五)</p>
-                                                <p>第二次：2025/01/07 (週二)</p>
-                                                <p>第三次：2025/01/09 (週四)</p>
+                                                <span class="badge bg-primary me-1">及時性</span>
+                                                <span class="badge bg-info me-1">正確性</span>
+                                                <span class="badge bg-success">完整性</span>
                                             </td>
-                                            <td>3天</td>
-                                            <td>5天</td>
-                                            <td>2天</td>
-                                            <td>2025/01/10 (週五)</td>
+                                            <td><span class="badge bg-success">啟用</span></td>
                                             <td>
                                                 <button class="btn btn-sm btn-outline-secondary" onclick="editDunningSetting(this)">編輯</button>
                                                 <button class="btn btn-sm btn-outline-danger" onclick="deleteDunningSetting(this)">刪除</button>
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td>2025/03/31 (週一)</td>
+                                            <td>年度報告</td>
+                                            <td>年度結束後60天</td>
+                                            <td>逾期5個工作日</td>
+                                            <td>逾期10個工作日</td>
+                                            <td>逾期15個工作日</td>
+                                            <td>逾期20個工作日</td>
                                             <td>
-                                                <p>第一次：2025/04/02 (週三)</p>
-                                                <p>第二次：2025/04/04 (週五)</p>
-                                                <p>第三次：2025/04/09 (週三)</p>
+                                                <span class="badge bg-primary me-1">及時性</span>
+                                                <span class="badge bg-info me-1">正確性</span>
+                                                <span class="badge bg-success">完整性</span>
                                             </td>
-                                            <td>2天</td>
-                                            <td>4天</td>
-                                            <td>3天</td>
-                                            <td>2025/04/10 (週四)</td>
+                                            <td><span class="badge bg-success">啟用</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-secondary" onclick="editDunningSetting(this)">編輯</button>
+                                                <button class="btn btn-sm btn-outline-danger" onclick="deleteDunningSetting(this)">刪除</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>進度報告</td>
+                                            <td>每月結束後15天</td>
+                                            <td>逾期2個工作日</td>
+                                            <td>逾期5個工作日</td>
+                                            <td>逾期8個工作日</td>
+                                            <td>逾期12個工作日</td>
+                                            <td>
+                                                <span class="badge bg-primary me-1">及時性</span>
+                                                <span class="badge bg-info me-1">正確性</span>
+                                                <span class="badge bg-success">完整性</span>
+                                            </td>
+                                            <td><span class="badge bg-success">啟用</span></td>
                                             <td>
                                                 <button class="btn btn-sm btn-outline-secondary" onclick="editDunningSetting(this)">編輯</button>
                                                 <button class="btn btn-sm btn-outline-danger" onclick="deleteDunningSetting(this)">刪除</button>
@@ -5686,6 +5919,34 @@
                                         </tr>
                                     </tbody>
                                 </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 催繳評核標準 -->
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">評核標準說明</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6 class="text-primary">評核面向</h6>
+                                    <ul>
+                                        <li><strong>及時性 (30%)</strong>：是否依時繳交</li>
+                                        <li><strong>正確性 (30%)</strong>：內容是否正確</li>
+                                        <li><strong>完整性 (25%)</strong>：文件是否完整</li>
+                                        <li><strong>合規性 (15%)</strong>：是否按規定清補</li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="text-primary">評核週期</h6>
+                                    <ul>
+                                        <li><strong>半年度評核</strong>：每年6月及12月進行</li>
+                                        <li><strong>年度總評</strong>：每年12月進行年度總評</li>
+                                        <li><strong>即時追蹤</strong>：逾期案件即時追蹤改善狀況</li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -5842,6 +6103,133 @@
 
 	<!-- 資料管理模組的模態框 -->
 	
+	<!-- 催繳紀錄模態框 -->
+	<div class="modal fade" id="dunningHistoryModal" tabindex="-1" aria-labelledby="dunningHistoryModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-xl">
+			<div class="modal-content">
+				<div class="modal-header bg-info text-white">
+					<h5 class="modal-title" id="dunningHistoryModalLabel">
+						<i class="bi bi-clock-history me-2"></i>催繳紀錄
+					</h5>
+					<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<!-- 篩選條件 -->
+					<div class="row mb-3">
+						<div class="col-md-3">
+							<label for="historyDocType" class="form-label">文件類型</label>
+							<select class="form-select" id="historyDocType">
+								<option value="">全部類型</option>
+								<option value="季度財報">季度財報</option>
+								<option value="年度報告">年度報告</option>
+								<option value="進度報告">進度報告</option>
+							</select>
+						</div>
+						<div class="col-md-3">
+							<label for="historyStatus" class="form-label">催繳狀態</label>
+							<select class="form-select" id="historyStatus">
+								<option value="">全部狀態</option>
+								<option value="第一次提醒">第一次提醒</option>
+								<option value="第二次提醒">第二次提醒</option>
+								<option value="第三次提醒">第三次提醒</option>
+								<option value="催繳公函">催繳公函</option>
+								<option value="已改善">已改善</option>
+							</select>
+						</div>
+						<div class="col-md-3">
+							<label for="historyStartDate" class="form-label">開始日期</label>
+							<input type="date" class="form-control" id="historyStartDate">
+						</div>
+						<div class="col-md-3">
+							<label for="historyEndDate" class="form-label">結束日期</label>
+							<input type="date" class="form-control" id="historyEndDate">
+						</div>
+					</div>
+					<div class="row mb-3">
+						<div class="col-12">
+							<button class="btn btn-primary" onclick="filterDunningHistory()">
+								<i class="bi bi-search me-1"></i>篩選
+							</button>
+							<button class="btn btn-outline-secondary ms-2" onclick="resetDunningHistoryFilter()">
+								<i class="bi bi-arrow-clockwise me-1"></i>重置
+							</button>
+						</div>
+					</div>
+
+					<!-- 催繳紀錄表格 -->
+					<div class="table-responsive">
+						<table class="table table-hover table-striped">
+							<thead class="table-light">
+								<tr>
+									<th>案件編號</th>
+									<th>案件名稱</th>
+									<th>文件類型</th>
+									<th>應繳交日期</th>
+									<th>逾期天數</th>
+									<th>催繳階段</th>
+									<th>催繳日期</th>
+									<th>改善狀況</th>
+									<th>評核分數</th>
+									<th>操作</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>CS001</td>
+									<td>智慧城市建設</td>
+									<td>季度財報</td>
+									<td>2024-03-31</td>
+									<td><span class="badge bg-danger">15天</span></td>
+									<td><span class="badge bg-warning">第二次提醒</span></td>
+									<td>2024-04-07</td>
+									<td><span class="badge bg-warning">處理中</span></td>
+									<td>75分</td>
+									<td>
+										<button class="btn btn-sm btn-outline-primary">檢視詳情</button>
+									</td>
+								</tr>
+								<tr>
+									<td>CS002</td>
+									<td>數位轉型諮詢</td>
+									<td>年度報告</td>
+									<td>2024-02-28</td>
+									<td><span class="badge bg-success">0天</span></td>
+									<td><span class="badge bg-success">已改善</span></td>
+									<td>2024-03-05</td>
+									<td><span class="badge bg-success">已完成</span></td>
+									<td>92分</td>
+									<td>
+										<button class="btn btn-sm btn-outline-primary">檢視詳情</button>
+									</td>
+								</tr>
+								<tr>
+									<td>CS003</td>
+									<td>綠能發展計劃</td>
+									<td>進度報告</td>
+									<td>2024-04-15</td>
+									<td><span class="badge bg-danger">8天</span></td>
+									<td><span class="badge bg-info">第一次提醒</span></td>
+									<td>2024-04-17</td>
+									<td><span class="badge bg-warning">處理中</span></td>
+									<td>68分</td>
+									<td>
+										<button class="btn btn-sm btn-outline-primary">檢視詳情</button>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
+					<button type="button" class="btn btn-outline-primary" onclick="exportDunningHistory()">
+						<i class="bi bi-download me-1"></i>匯出紀錄
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<!-- 新增標籤 Modal -->
 	<div class="modal fade" id="addTagModal" tabindex="-1" aria-labelledby="addTagModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
@@ -8171,7 +8559,370 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-});
+	});
+
+	// 專案型匯出功能
+	function exportProjectTypeData() {
+		const table = document.querySelector('#project-type-page table tbody');
+		const rows = Array.from(table.querySelectorAll('tr'));
+		
+		if (rows.length === 0) {
+			alert('沒有專案型資料可以匯出！');
+			return;
+		}
+		
+		// 創建 CSV 內容
+		let csvContent = '案件名稱,案件類型,專案國隊,負責人,投資金額,上傳進度,狀態\n';
+		
+		rows.forEach(row => {
+			const cells = Array.from(row.cells).slice(0, -1); // 排除最後一列的操作按鈕
+			const rowData = cells.map(cell => {
+				// 處理進度條的顯示
+				if (cell.querySelector('.progress-bar')) {
+					return cell.querySelector('.progress-bar').style.width;
+				}
+				return cell.textContent.trim();
+			}).join(',');
+			csvContent += rowData + '\n';
+		});
+		
+		// 下載 CSV 檔案
+		const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+		const link = document.createElement('a');
+		const url = URL.createObjectURL(blob);
+		link.setAttribute('href', url);
+		link.setAttribute('download', '專案型資料.csv');
+		link.style.visibility = 'hidden';
+		document.body.appendChild(link);
+		link.click();
+		document.body.removeChild(link);
+		
+		alert('專案型資料已匯出！');
+	}
+
+	// 股權型匯出功能
+	function exportEquityTypeData() {
+		const table = document.querySelector('#equity-type-page table tbody');
+		const rows = Array.from(table.querySelectorAll('tr'));
+		
+		if (rows.length === 0) {
+			alert('沒有股權型資料可以匯出！');
+			return;
+		}
+		
+		// 創建 CSV 內容
+		let csvContent = '案件名稱,案件類型,專案國隊,負責人,投資金額,持股比例,上傳進度,狀態\n';
+		
+		rows.forEach(row => {
+			const cells = Array.from(row.cells).slice(0, -1); // 排除最後一列的操作按鈕
+			const rowData = cells.map(cell => {
+				// 處理進度條的顯示
+				if (cell.querySelector('.progress-bar')) {
+					return cell.querySelector('.progress-bar').style.width;
+				}
+				return cell.textContent.trim();
+			}).join(',');
+			csvContent += rowData + '\n';
+		});
+		
+		// 下載 CSV 檔案
+		const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+		const link = document.createElement('a');
+		const url = URL.createObjectURL(blob);
+		link.setAttribute('href', url);
+		link.setAttribute('download', '股權型資料.csv');
+		link.style.visibility = 'hidden';
+		document.body.appendChild(link);
+		link.click();
+		document.body.removeChild(link);
+		
+		alert('股權型資料已匯出！');
+	}
+
+	// 會議通知匯出功能
+	function exportMeetingData() {
+		const table = document.querySelector('#meeting-notice-page table tbody');
+		const rows = Array.from(table.querySelectorAll('tr'));
+		
+		if (rows.length === 0) {
+			alert('沒有會議通知資料可以匯出！');
+			return;
+		}
+		
+		// 創建 CSV 內容
+		let csvContent = '序號,通知主旨,會議日期,會議時間,主持人,標籤,備註,狀態\n';
+		
+		rows.forEach(row => {
+			const cells = Array.from(row.cells).slice(0, -1); // 排除最後一列的操作按鈕
+			const rowData = cells.map(cell => {
+				return cell.textContent.trim();
+			}).join(',');
+			csvContent += rowData + '\n';
+		});
+		
+		// 下載 CSV 檔案
+		const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+		const link = document.createElement('a');
+		const url = URL.createObjectURL(blob);
+		link.setAttribute('href', url);
+		link.setAttribute('download', '會議通知資料.csv');
+		link.style.visibility = 'hidden';
+		document.body.appendChild(link);
+		link.click();
+		document.body.removeChild(link);
+		
+		alert('會議通知資料已匯出！');
+	}
+
+	// 儲存會議通知
+	function saveMeetingNotification() {
+		// 獲取表單數據
+		const meetingSubject = document.getElementById('meetingSubject').value;
+		const meetingHost = document.getElementById('meetingHost').value;
+		const meetingDate = document.getElementById('meetingDate').value;
+		const meetingTime = document.getElementById('meetingTime').value;
+		const meetingLocation = document.getElementById('meetingLocation').value;
+		const meetingAttendees = Array.from(document.getElementById('meetingAttendees').selectedOptions).map(option => option.value);
+		const meetingTags = Array.from(document.getElementById('meetingTags').selectedOptions).map(option => option.value);
+		const meetingContent = document.getElementById('meetingContent').value;
+		const meetingRemark = document.getElementById('meetingRemark').value;
+		const meetingPriority = document.getElementById('meetingPriority').value;
+		const meetingStatus = document.getElementById('meetingStatus').value;
+		const sendEmailNotification = document.getElementById('sendEmailNotification').checked;
+		const createTasksFromMeeting = document.getElementById('createTasksFromMeeting').checked;
+		
+		// 驗證必填欄位
+		if (!meetingSubject || !meetingHost || !meetingDate || !meetingTime || meetingAttendees.length === 0 || !meetingContent) {
+			alert('請填寫所有必填欄位！');
+			return;
+		}
+		
+		// 創建新的會議通知記錄
+		const table = document.querySelector('#meeting-notice-page table tbody');
+		const newRow = document.createElement('tr');
+		const newId = table.rows.length + 1;
+		
+		// 格式化時間
+		const timeDisplay = meetingTime.substring(0, 5);
+		
+		// 創建標籤HTML
+		const tagsHtml = meetingTags.map(tag => {
+			const colorClass = getTagColorClass(tag);
+			return `<span class="badge ${colorClass} me-1">${tag}</span>`;
+		}).join('');
+		
+		newRow.innerHTML = `
+			<td>${newId}</td>
+			<td>${meetingSubject}</td>
+			<td>${meetingDate}</td>
+			<td>${timeDisplay}</td>
+			<td>${meetingHost}</td>
+			<td>${tagsHtml}</td>
+			<td>${meetingRemark || '-'}</td>
+			<td><span class="badge bg-${meetingStatus === '已發送' ? 'success' : 'warning'}">${meetingStatus}</span></td>
+			<td>
+				<button class="btn btn-sm btn-outline-primary" onclick="openMeetingDetail('${newId}')">
+					<i class="bi bi-eye me-1"></i>檢視
+				</button>
+				<button class="btn btn-sm btn-outline-secondary">編輯</button>
+				<button class="btn btn-sm btn-outline-danger">刪除</button>
+			</td>
+		`;
+		
+		table.appendChild(newRow);
+		
+		// 處理郵件發送
+		if (sendEmailNotification) {
+			alert('正在發送會議通知郵件...');
+			setTimeout(() => {
+				alert('會議通知郵件已發送給所有與會人員！');
+			}, 1500);
+		}
+		
+		// 處理自動生成任務
+		if (createTasksFromMeeting) {
+			alert('正在生成相關任務...');
+			setTimeout(() => {
+				alert('已自動生成相關任務！');
+			}, 1000);
+		}
+		
+		// 關閉模態框並重置表單
+		const addMeetingModal = bootstrap.Modal.getInstance(document.getElementById('addMeetingModal'));
+		if (addMeetingModal) {
+			addMeetingModal.hide();
+		}
+		
+		// 重置表單
+		document.getElementById('addMeetingForm').reset();
+		
+		alert('會議通知已成功建立！');
+	}
+
+	// 獲取標籤顏色類別
+	function getTagColorClass(tag) {
+		const colorMap = {
+			'重要': 'bg-primary',
+			'緊急': 'bg-danger',
+			'季度會議': 'bg-info',
+			'開發': 'bg-warning',
+			'客戶': 'bg-success',
+			'內部': 'bg-secondary',
+			'策略': 'bg-primary',
+			'規劃': 'bg-success'
+		};
+		return colorMap[tag] || 'bg-secondary';
+	}
+
+	// 催繳機制相關函數
+
+	// 檢視催繳紀錄
+	function viewDunningHistory() {
+		const dunningHistoryModal = new bootstrap.Modal(document.getElementById('dunningHistoryModal'));
+		dunningHistoryModal.show();
+	}
+
+	// 篩選催繳紀錄
+	function filterDunningHistory() {
+		const docType = document.getElementById('historyDocType').value;
+		const status = document.getElementById('historyStatus').value;
+		const startDate = document.getElementById('historyStartDate').value;
+		const endDate = document.getElementById('historyEndDate').value;
+		
+		// 這裡可以添加實際的篩選邏輯
+		alert(`篩選條件：\n文件類型：${docType || '全部'}\n催繳狀態：${status || '全部'}\n日期範圍：${startDate || '不限'} 至 ${endDate || '不限'}`);
+	}
+
+	// 重置催繳紀錄篩選
+	function resetDunningHistoryFilter() {
+		document.getElementById('historyDocType').value = '';
+		document.getElementById('historyStatus').value = '';
+		document.getElementById('historyStartDate').value = '';
+		document.getElementById('historyEndDate').value = '';
+		alert('篩選條件已重置！');
+	}
+
+	// 匯出催繳紀錄
+	function exportDunningHistory() {
+		// 創建 CSV 內容
+		let csvContent = '案件編號,案件名稱,文件類型,應繳交日期,逾期天數,催繳階段,催繳日期,改善狀況,評核分數\n';
+		
+		// 這裡可以添加實際的匯出邏輯
+		csvContent += 'CS001,智慧城市建設,季度財報,2024-03-31,15天,第二次提醒,2024-04-07,處理中,75分\n';
+		csvContent += 'CS002,數位轉型諮詢,年度報告,2024-02-28,0天,已改善,2024-03-05,已完成,92分\n';
+		csvContent += 'CS003,綠能發展計劃,進度報告,2024-04-15,8天,第一次提醒,2024-04-17,處理中,68分\n';
+		
+		// 下載 CSV 檔案
+		const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+		const link = document.createElement('a');
+		const url = URL.createObjectURL(blob);
+		link.setAttribute('href', url);
+		link.setAttribute('download', '催繳紀錄.csv');
+		link.style.visibility = 'hidden';
+		document.body.appendChild(link);
+		link.click();
+		document.body.removeChild(link);
+		
+		alert('催繳紀錄已匯出！');
+	}
+
+	// 生成評核報表
+	function generateDunningReport() {
+		// 模擬生成評核報表
+		alert('正在生成評核報表...');
+		
+		setTimeout(() => {
+			const reportContent = `
+評核報表 - ${new Date().toLocaleDateString()}
+
+=== 半年度評核結果 ===
+總案件數：45件
+準時繳交：38件 (84.4%)
+逾期案件：7件 (15.6%)
+
+=== 評核分數分布 ===
+90分以上：15件 (33.3%)
+80-89分：18件 (40.0%)
+70-79分：8件 (17.8%)
+60-69分：3件 (6.7%)
+60分以下：1件 (2.2%)
+
+=== 改善建議 ===
+1. 加強事前提醒機制
+2. 建立文件範本庫
+3. 定期舉辦說明會
+4. 優化繳交流程
+			`;
+			
+			// 下載報表
+			const blob = new Blob([reportContent], { type: 'text/plain;charset=utf-8;' });
+			const link = document.createElement('a');
+			const url = URL.createObjectURL(blob);
+			link.setAttribute('href', url);
+			link.setAttribute('download', `催繳評核報表_${new Date().toISOString().split('T')[0]}.txt`);
+			link.style.visibility = 'hidden';
+			document.body.appendChild(link);
+			link.click();
+			document.body.removeChild(link);
+			
+			alert('評核報表已生成並下載！');
+		}, 2000);
+	}
+
+	// 編輯催繳設定
+	function editDunningSetting(button) {
+		// 這裡可以添加編輯催繳設定的邏輯
+		alert('編輯催繳設定功能');
+	}
+
+	// 刪除催繳設定
+	function deleteDunningSetting(button) {
+		if (confirm('確定要刪除這個催繳設定嗎？')) {
+			// 這裡可以添加刪除催繳設定的邏輯
+			alert('催繳設定已刪除！');
+		}
+	}
+
+	// 自動催繳機制
+	function autoDunningProcess() {
+		// 模擬自動催繳處理
+		const today = new Date();
+		const overdueCases = [
+			{ id: 'CS001', name: '智慧城市建設', dueDate: '2024-03-31', overdueDays: 15, stage: 'second' },
+			{ id: 'CS003', name: '綠能發展計劃', dueDate: '2024-04-15', overdueDays: 8, stage: 'first' }
+		];
+		
+		overdueCases.forEach(caseItem => {
+			if (caseItem.stage === 'first' && caseItem.overdueDays >= 3) {
+				sendFirstReminder(caseItem);
+			} else if (caseItem.stage === 'second' && caseItem.overdueDays >= 7) {
+				sendSecondReminder(caseItem);
+			} else if (caseItem.overdueDays >= 10) {
+				sendThirdReminder(caseItem);
+			}
+		});
+	}
+
+	// 發送第一次提醒
+	function sendFirstReminder(caseItem) {
+		console.log(`發送第一次提醒給案件：${caseItem.name}`);
+		// 這裡可以添加實際的郵件發送邏輯
+	}
+
+	// 發送第二次提醒
+	function sendSecondReminder(caseItem) {
+		console.log(`發送第二次提醒給案件：${caseItem.name}`);
+		// 這裡可以添加實際的郵件發送邏輯
+	}
+
+	// 發送第三次提醒
+	function sendThirdReminder(caseItem) {
+		console.log(`發送第三次提醒給案件：${caseItem.name}`);
+		// 這裡可以添加實際的郵件發送邏輯
+	}
+
+	// 定期執行催繳檢查
+	setInterval(autoDunningProcess, 24 * 60 * 60 * 1000); // 每24小時檢查一次
 
 	</script>
 </body>
