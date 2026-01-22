@@ -100,8 +100,11 @@ function handleFileUpload(file) {
                 }
 
                 // Get bus value - support multiple column names
-                let busValue = row['車次'] || row['車 / 船號'] || row['車次&遊湖'] || row['車號'] || 'A';
-                busValue = String(busValue).charAt(0).toUpperCase();
+                let busValue = row['車次'] || row['車 / 船號'] || row['車次&遊湖'] || row['車號'] ||
+                               row['船號'] || row['船次'] || row['號'] || row['編號'] || row['組別'] ||
+                               row['幾號船'] || row['幾號車'] || 'A';
+                // 提取字母或數字 (例如 "A號船" -> "A", "1號船" -> "1")
+                busValue = String(busValue).replace(/[號船車]/g, '').trim().charAt(0).toUpperCase();
 
                 return {
                     id: index,
