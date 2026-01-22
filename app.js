@@ -24,12 +24,18 @@ const state = {
         labels: 3.5,       // 標籤區 (mm)
         footer: 3          // 底部資訊 (mm)
     },
-    // Per-bus settings (colors and footer)
+    // Per-bus settings (colors and footer) - 支援字母 A-D 和數字 1-6
     busSetting: {
-        'A': { bgColor: '#d4e6d4', textColor: '#2a4a2a', borderColor: '#5a7a5a', footerText: 'A 號 領隊 黃啟翔 0935-670-825' },
+        'A': { bgColor: '#d4e6d4', textColor: '#2a4a2a', borderColor: '#5a7a5a', footerText: 'A 號 領隊 待確認' },
         'B': { bgColor: '#d4e0e6', textColor: '#2a3a4a', borderColor: '#5a6a7a', footerText: 'B 號 領隊 待確認' },
         'C': { bgColor: '#e6e4d4', textColor: '#4a4a2a', borderColor: '#7a7a5a', footerText: 'C 號 領隊 待確認' },
-        'D': { bgColor: '#e6d4d4', textColor: '#4a2a2a', borderColor: '#7a5a5a', footerText: 'D 號 領隊 待確認' }
+        'D': { bgColor: '#e6d4d4', textColor: '#4a2a2a', borderColor: '#7a5a5a', footerText: 'D 號 領隊 待確認' },
+        '1': { bgColor: '#d4e6d4', textColor: '#2a4a2a', borderColor: '#5a7a5a', footerText: '1 號 領隊 待確認' },
+        '2': { bgColor: '#d4e0e6', textColor: '#2a3a4a', borderColor: '#5a6a7a', footerText: '2 號 領隊 待確認' },
+        '3': { bgColor: '#e6e4d4', textColor: '#4a4a2a', borderColor: '#7a7a5a', footerText: '3 號 領隊 待確認' },
+        '4': { bgColor: '#e6d4d4', textColor: '#4a2a2a', borderColor: '#7a5a5a', footerText: '4 號 領隊 待確認' },
+        '5': { bgColor: '#e4d4e6', textColor: '#3a2a4a', borderColor: '#6a5a7a', footerText: '5 號 領隊 待確認' },
+        '6': { bgColor: '#d4e6e0', textColor: '#2a4a3a', borderColor: '#5a7a6a', footerText: '6 號 領隊 待確認' }
     }
 };
 
@@ -121,12 +127,15 @@ function handleFileUpload(file) {
                 };
             }).filter(p => p.name); // Filter out empty rows
 
-            // Group by bus
-            state.personsByBus = { A: [], B: [], C: [], D: [] };
+            // Group by bus - 支援字母 A-D 和數字 1-6
+            state.personsByBus = { A: [], B: [], C: [], D: [], '1': [], '2': [], '3': [], '4': [], '5': [], '6': [] };
             state.allPersons.forEach(person => {
                 const bus = person.bus.charAt(0).toUpperCase();
-                if (state.personsByBus[bus]) {
+                if (state.personsByBus[bus] !== undefined) {
                     state.personsByBus[bus].push(person);
+                } else {
+                    // 如果是未預設的組別，動態建立
+                    state.personsByBus[bus] = [person];
                 }
             });
 
@@ -167,8 +176,8 @@ function updateBusTabs() {
         span.textContent = count;
     });
 
-    // Select first bus with data
-    const firstBusWithData = ['A', 'B', 'C', 'D'].find(bus =>
+    // Select first bus with data - 支援字母 A-D 和數字 1-6
+    const firstBusWithData = ['A', 'B', 'C', 'D', '1', '2', '3', '4', '5', '6'].find(bus =>
         state.personsByBus[bus]?.length > 0
     );
     if (firstBusWithData) {
@@ -232,7 +241,7 @@ function clearData() {
     }
     if (confirm('確定要清除所有資料嗎？')) {
         state.allPersons = [];
-        state.personsByBus = { A: [], B: [], C: [], D: [] };
+        state.personsByBus = { A: [], B: [], C: [], D: [], '1': [], '2': [], '3': [], '4': [], '5': [], '6': [] };
         state.isApplied = false;
         renderPreview();
         elements.uploadZone.classList.remove('has-file');
