@@ -24,12 +24,28 @@ const state = {
         labels: 3.5,       // 標籤區 (mm)
         footer: 3          // 底部資訊 (mm)
     },
-    // Per-bus settings (colors and footer) - 支援字母 A-D 和數字 1-20
+    // Per-bus settings (colors and footer) - 支援字母 A-T 和數字 1-20
     busSetting: {
         'A': { bgColor: '#d4e6d4', textColor: '#2a4a2a', borderColor: '#5a7a5a', footerText: 'A 號 領隊 待確認' },
         'B': { bgColor: '#d4e0e6', textColor: '#2a3a4a', borderColor: '#5a6a7a', footerText: 'B 號 領隊 待確認' },
         'C': { bgColor: '#e6e4d4', textColor: '#4a4a2a', borderColor: '#7a7a5a', footerText: 'C 號 領隊 待確認' },
         'D': { bgColor: '#e6d4d4', textColor: '#4a2a2a', borderColor: '#7a5a5a', footerText: 'D 號 領隊 待確認' },
+        'E': { bgColor: '#e4d4e6', textColor: '#3a2a4a', borderColor: '#6a5a7a', footerText: 'E 號 領隊 待確認' },
+        'F': { bgColor: '#d4e6e0', textColor: '#2a4a3a', borderColor: '#5a7a6a', footerText: 'F 號 領隊 待確認' },
+        'G': { bgColor: '#e6d4e0', textColor: '#4a2a3a', borderColor: '#7a5a6a', footerText: 'G 號 領隊 待確認' },
+        'H': { bgColor: '#d4d4e6', textColor: '#2a2a4a', borderColor: '#5a5a7a', footerText: 'H 號 領隊 待確認' },
+        'I': { bgColor: '#e0e6d4', textColor: '#3a4a2a', borderColor: '#6a7a5a', footerText: 'I 號 領隊 待確認' },
+        'J': { bgColor: '#e6e0d4', textColor: '#4a3a2a', borderColor: '#7a6a5a', footerText: 'J 號 領隊 待確認' },
+        'K': { bgColor: '#d4e0e0', textColor: '#2a3a3a', borderColor: '#5a6a6a', footerText: 'K 號 領隊 待確認' },
+        'L': { bgColor: '#e0d4e6', textColor: '#3a2a4a', borderColor: '#6a5a7a', footerText: 'L 號 領隊 待確認' },
+        'M': { bgColor: '#d4e6d4', textColor: '#2a4a2a', borderColor: '#5a7a5a', footerText: 'M 號 領隊 待確認' },
+        'N': { bgColor: '#d4e0e6', textColor: '#2a3a4a', borderColor: '#5a6a7a', footerText: 'N 號 領隊 待確認' },
+        'O': { bgColor: '#e6e4d4', textColor: '#4a4a2a', borderColor: '#7a7a5a', footerText: 'O 號 領隊 待確認' },
+        'P': { bgColor: '#e6d4d4', textColor: '#4a2a2a', borderColor: '#7a5a5a', footerText: 'P 號 領隊 待確認' },
+        'Q': { bgColor: '#e4d4e6', textColor: '#3a2a4a', borderColor: '#6a5a7a', footerText: 'Q 號 領隊 待確認' },
+        'R': { bgColor: '#d4e6e0', textColor: '#2a4a3a', borderColor: '#5a7a6a', footerText: 'R 號 領隊 待確認' },
+        'S': { bgColor: '#e6d4e0', textColor: '#4a2a3a', borderColor: '#7a5a6a', footerText: 'S 號 領隊 待確認' },
+        'T': { bgColor: '#d4d4e6', textColor: '#2a2a4a', borderColor: '#5a5a7a', footerText: 'T 號 領隊 待確認' },
         '1': { bgColor: '#d4e6d4', textColor: '#2a4a2a', borderColor: '#5a7a5a', footerText: '1 號 領隊 待確認' },
         '2': { bgColor: '#d4e0e6', textColor: '#2a3a4a', borderColor: '#5a6a7a', footerText: '2 號 領隊 待確認' },
         '3': { bgColor: '#e6e4d4', textColor: '#4a4a2a', borderColor: '#7a7a5a', footerText: '3 號 領隊 待確認' },
@@ -148,9 +164,10 @@ function handleFileUpload(file) {
                 };
             }).filter(p => p.name); // Filter out empty rows
 
-            // Group by bus - 支援字母 A-D 和數字 1-20
+            // Group by bus - 支援字母 A-T 和數字 1-20
             state.personsByBus = {
-                A: [], B: [], C: [], D: [],
+                A: [], B: [], C: [], D: [], E: [], F: [], G: [], H: [], I: [], J: [],
+                K: [], L: [], M: [], N: [], O: [], P: [], Q: [], R: [], S: [], T: [],
                 '1': [], '2': [], '3': [], '4': [], '5': [], '6': [], '7': [], '8': [], '9': [], '10': [],
                 '11': [], '12': [], '13': [], '14': [], '15': [], '16': [], '17': [], '18': [], '19': [], '20': []
             };
@@ -201,9 +218,10 @@ function updateBusTabs() {
         span.textContent = count;
     });
 
-    // Select first bus with data - 支援字母 A-D 和數字 1-20
+    // Select first bus with data - 支援字母 A-T 和數字 1-20
     const firstBusWithData = [
-        'A', 'B', 'C', 'D',
+        'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
+        'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
         '1', '2', '3', '4', '5', '6', '7', '8', '9', '10',
         '11', '12', '13', '14', '15', '16', '17', '18', '19', '20'
     ].find(bus => state.personsByBus[bus]?.length > 0);
@@ -269,7 +287,8 @@ function clearData() {
     if (confirm('確定要清除所有資料嗎？')) {
         state.allPersons = [];
         state.personsByBus = {
-            A: [], B: [], C: [], D: [],
+            A: [], B: [], C: [], D: [], E: [], F: [], G: [], H: [], I: [], J: [],
+            K: [], L: [], M: [], N: [], O: [], P: [], Q: [], R: [], S: [], T: [],
             '1': [], '2': [], '3': [], '4': [], '5': [], '6': [], '7': [], '8': [], '9': [], '10': [],
             '11': [], '12': [], '13': [], '14': [], '15': [], '16': [], '17': [], '18': [], '19': [], '20': []
         };
