@@ -26,10 +26,10 @@ const state = {
     },
     // Per-bus settings (colors and footer)
     busSetting: {
-        'A': { bgColor: '#d4e6d4', textColor: '#2a4a2a', borderColor: '#5a7a5a', footerText: 'A 車 領隊 黃啟翔 0935-670-825' },
-        'B': { bgColor: '#d4e0e6', textColor: '#2a3a4a', borderColor: '#5a6a7a', footerText: 'B 車 領隊 待確認' },
-        'C': { bgColor: '#e6e4d4', textColor: '#4a4a2a', borderColor: '#7a7a5a', footerText: 'C 車 領隊 待確認' },
-        'D': { bgColor: '#e6d4d4', textColor: '#4a2a2a', borderColor: '#7a5a5a', footerText: 'D 車 領隊 待確認' }
+        'A': { bgColor: '#d4e6d4', textColor: '#2a4a2a', borderColor: '#5a7a5a', footerText: 'A 號 領隊 黃啟翔 0935-670-825' },
+        'B': { bgColor: '#d4e0e6', textColor: '#2a3a4a', borderColor: '#5a6a7a', footerText: 'B 號 領隊 待確認' },
+        'C': { bgColor: '#e6e4d4', textColor: '#4a4a2a', borderColor: '#7a7a5a', footerText: 'C 號 領隊 待確認' },
+        'D': { bgColor: '#e6d4d4', textColor: '#4a2a2a', borderColor: '#7a5a5a', footerText: 'D 號 領隊 待確認' }
     }
 };
 
@@ -267,7 +267,7 @@ function renderPreview() {
     if (!state.isApplied) {
         elements.previewModeInfo.style.display = 'block';
         const previewCount = Math.min(split, persons.length);
-        elements.previewCount.textContent = `${state.currentBus}車：共 ${persons.length} 張，預覽第 1 頁（${previewCount} 張）`;
+        elements.previewCount.textContent = `${state.currentBus} 號：共 ${persons.length} 張，預覽第 1 頁（${previewCount} 張）`;
 
         let html = `<div class="a4-page split-${split}">`;
 
@@ -309,7 +309,7 @@ function renderPreview() {
 
         elements.previewGrid.innerHTML = '';
         elements.previewGrid.appendChild(fragment);
-        elements.previewCount.textContent = `${state.currentBus}車：${persons.length} 張名牌，${totalPages} 頁 A4`;
+        elements.previewCount.textContent = `${state.currentBus} 號：${persons.length} 張名牌，${totalPages} 頁 A4`;
     }
 
     // Add click listeners using event delegation
@@ -351,7 +351,7 @@ function renderNametagHTML(person, index) {
             <div class="nametag-details" style="font-size: ${state.fontSizes.labels}mm;">
                 <div class="nametag-detail-row">
                     <span class="detail-label" style="color: ${borderColor};">${state.config.busLabel}</span>
-                    <span class="detail-value" style="color: ${textColor};">${person.bus} 車</span>
+                    <span class="detail-value" style="color: ${textColor};">${person.bus} 號</span>
                 </div>
                 <div class="nametag-detail-row">
                     <span class="detail-label" style="color: ${borderColor};">${state.config.tableLabel}</span>
@@ -547,7 +547,7 @@ async function exportPdf() {
         pdf.addImage(imgData, 'JPEG', 0, 0, 210, 297);
     }
 
-    pdf.save(`名牌輸出_${state.currentBus}車.pdf`);
+    pdf.save(`名牌輸出_${state.currentBus}號.pdf`);
     showToast('PDF 已下載', 'success');
 }
 
@@ -571,11 +571,11 @@ async function exportSelectedPdf() {
     );
 
     if (busesWithData.length === 0) {
-        showToast('所選車次中沒有資料', 'error');
+        showToast('所選組別中沒有資料', 'error');
         return;
     }
 
-    showToast(`正在生成 ${busesWithData.length} 個車次 PDF...`, 'success');
+    showToast(`正在生成 ${busesWithData.length} 個組別 PDF...`, 'success');
 
     const { jsPDF } = window.jspdf;
     const pdf = new jsPDF({
@@ -622,8 +622,8 @@ async function exportSelectedPdf() {
     selectBus(originalBus);
 
     const busLabels = busesWithData.join('');
-    pdf.save(`名牌輸出_${busLabels}車.pdf`);
-    showToast(`${busesWithData.length} 個車次 PDF 已下載`, 'success');
+    pdf.save(`名牌輸出_${busLabels}號.pdf`);
+    showToast(`${busesWithData.length} 個組別 PDF 已下載`, 'success');
 }
 
 function setupExportListeners() {
