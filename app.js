@@ -172,7 +172,7 @@ function handleFileUpload(file) {
                 '11': [], '12': [], '13': [], '14': [], '15': [], '16': [], '17': [], '18': [], '19': [], '20': []
             };
             state.allPersons.forEach(person => {
-                const bus = person.bus.charAt(0).toUpperCase();
+                const bus = person.bus; // 直接使用已解析的值 (如 "10", "A")
                 if (state.personsByBus[bus] !== undefined) {
                     state.personsByBus[bus].push(person);
                 } else {
@@ -211,11 +211,15 @@ function updateBusTabs() {
         tab.style.display = count > 0 ? 'flex' : 'none';
     });
 
-    // Update checkbox counts in export panel
-    document.querySelectorAll('.check-count').forEach(span => {
-        const bus = span.dataset.bus;
+    // Update checkbox counts in export panel and hide empty ones
+    document.querySelectorAll('.bus-checkbox').forEach(label => {
+        const checkbox = label.querySelector('input[type="checkbox"]');
+        const span = label.querySelector('.check-count');
+        const bus = checkbox.value;
         const count = state.personsByBus[bus]?.length || 0;
         span.textContent = count;
+        // Hide checkboxes with no data
+        label.style.display = count > 0 ? 'flex' : 'none';
     });
 
     // Select first bus with data - 支援字母 A-T 和數字 1-20
