@@ -114,6 +114,13 @@ function showToast(message, type = 'success') {
 function handleFileUpload(file) {
     if (!file) return;
 
+    // 檢查 XLSX 函式庫是否載入
+    if (typeof XLSX === 'undefined') {
+        showToast('Excel 函式庫載入失敗，請重新整理頁面', 'error');
+        console.error('XLSX library not loaded');
+        return;
+    }
+
     const reader = new FileReader();
     reader.onload = function(e) {
         try {
@@ -125,9 +132,15 @@ function handleFileUpload(file) {
             const sheet = workbook.Sheets[sheetName];
             const jsonData = XLSX.utils.sheet_to_json(sheet);
 
+            console.log('Excel 欄位名稱:', jsonData.length > 0 ? Object.keys(jsonData[0]) : '無資料');
+            console.log('讀取到的資料筆數:', jsonData.length);
+
             state.allPersons = jsonData.map((row, index) => {
+                // Get name - support multiple column names
+                const nameValue = row['姓名'] || row['名字'] || row['姓 名'] || row['Name'] || row['name'] || '';
+
                 // Get table value - could be number or "素"
-                let tableValue = row['桌次&活動'] || row['桌次'] || row['桌號'] || '';
+                let tableValue = row['桌次&活動'] || row['桌次'] || row['桌號'] || row['桌'] || '';
                 let isVeg = false;
 
                 if (tableValue === '素' || String(tableValue).includes('素')) {
@@ -138,7 +151,7 @@ function handleFileUpload(file) {
                 // Get bus value - support multiple column names
                 let busValue = row['車次'] || row['車 / 船號'] || row['車次&遊湖'] || row['車號'] ||
                                row['船號'] || row['船次'] || row['號'] || row['編號'] || row['組別'] ||
-                               row['幾號船'] || row['幾號車'] || 'A';
+                               row['幾號船'] || row['幾號車'] || row['遊湖'] || 'A';
                 // 提取字母或數字 (例如 "A號船" -> "A", "10號船" -> "10")
                 busValue = String(busValue).replace(/[號船車遊湖]/g, '').trim();
                 // 如果是數字開頭，取整個數字；如果是字母開頭，取第一個字母
@@ -151,11 +164,11 @@ function handleFileUpload(file) {
 
                 return {
                     id: index,
-                    name: row['姓名'] || '',
+                    name: nameValue,
                     bus: busValue,
                     table: String(tableValue),
-                    room: String(row['房號'] || ''),
-                    note: row['備註'] || '',
+                    room: String(row['房號'] || row['房 號'] || row['Room'] || ''),
+                    note: row['備註'] || row['備 註'] || row['Note'] || '',
                     isVeg: isVeg,
                     override: {
                         fontSize: null,
