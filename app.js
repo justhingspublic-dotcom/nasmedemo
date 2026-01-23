@@ -114,12 +114,19 @@ function showToast(message, type = 'success') {
 function handleFileUpload(file) {
     if (!file) return;
 
+    console.log('=== 開始處理檔案 ===');
+    console.log('檔案名稱:', file.name);
+    console.log('檔案大小:', file.size, 'bytes');
+    console.log('檔案類型:', file.type);
+
     // 檢查 XLSX 函式庫是否載入
     if (typeof XLSX === 'undefined') {
         showToast('Excel 函式庫載入失敗，請重新整理頁面', 'error');
-        console.error('XLSX library not loaded');
+        console.error('XLSX library not loaded - CDN 可能被封鎖');
+        alert('錯誤：Excel 函式庫載入失敗！\n\n可能原因：\n1. 網路封鎖了 CDN\n2. 瀏覽器擴充功能阻擋\n\n請嘗試：\n1. 關閉廣告阻擋器\n2. 使用無痕模式\n3. 檢查網路設定');
         return;
     }
+    console.log('XLSX 函式庫已載入');
 
     const reader = new FileReader();
     reader.onload = function(e) {
@@ -741,6 +748,17 @@ function setupExportListeners() {
 
 // ===== Initialize =====
 function init() {
+    // 檢查必要函式庫是否載入
+    console.log('=== 系統初始化 ===');
+    console.log('XLSX 函式庫:', typeof XLSX !== 'undefined' ? '已載入' : '未載入');
+    console.log('jsPDF 函式庫:', typeof window.jspdf !== 'undefined' ? '已載入' : '未載入');
+    console.log('html2canvas 函式庫:', typeof html2canvas !== 'undefined' ? '已載入' : '未載入');
+
+    if (typeof XLSX === 'undefined') {
+        console.error('警告：XLSX 函式庫未載入，Excel 匯入功能將無法使用');
+        showToast('Excel 函式庫載入失敗，請檢查網路連線', 'error');
+    }
+
     document.getElementById('clearDataBtn').addEventListener('click', clearData);
 
     setupUploadZone();
