@@ -130,8 +130,24 @@ function handleFileUpload(file) {
             // Read from 總表 sheet
             const sheetName = workbook.SheetNames.includes('總表') ? '總表' : workbook.SheetNames[0];
             const sheet = workbook.Sheets[sheetName];
-            const jsonData = XLSX.utils.sheet_to_json(sheet);
 
+            // 先讀取為陣列格式，找出真正的標題列
+            const rawData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+            // 尋找包含「姓名」的列作為標題列
+            let headerRowIndex = 0;
+            for (let i = 0; i < Math.min(10, rawData.length); i++) {
+                const row = rawData[i];
+                if (row && row.some(cell => String(cell).includes('姓名'))) {
+                    headerRowIndex = i;
+                    break;
+                }
+            }
+
+            // 使用找到的標題列重新解析
+            const jsonData = XLSX.utils.sheet_to_json(sheet, { range: headerRowIndex });
+
+            console.log('標題列位置:', headerRowIndex);
             console.log('Excel 欄位名稱:', jsonData.length > 0 ? Object.keys(jsonData[0]) : '無資料');
             console.log('讀取到的資料筆數:', jsonData.length);
 
